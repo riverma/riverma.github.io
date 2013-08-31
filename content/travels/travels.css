@@ -1,0 +1,27 @@
+.panel.flickr {
+	border-width: 2px;
+	border-color: #31527c;
+	width: 215px;
+	height: 150px;
+}
+.panel.flickr:hover {
+	border-color: #5590dd;
+}
+
+#caliroadtrip {
+	background-image: url('central_north_cali.jpg');
+	background-size: 100%;
+}
+#caliroadtrip h5 {
+	color: black;
+	font-weight: bold;
+}
+#caliroadtrip p {
+	color: #b3c4ff;
+}
+
+.flickr_set {
+	border-width: 1px;
+	border-style: solid;
+	border-color: black;
+}

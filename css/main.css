@@ -1,0 +1,154 @@
+/************** DOCUMENT STYLES **************/
+body {
+	background-color: #1e2122;
+	font-family: "quicksand", "Courier New", "Verdana", "Sans-Serif"; 
+	color: #b9bdc9;
+	padding-top: 15px;
+}
+
+@font-face {
+	font-family: quicksand;
+	src: local(Quicksand-Regular), url('font/Quicksand-Regular.otf') format('opentype');
+}
+@font-face {
+	font-family: quicksand;
+	src: local(Quicksand-Bold), url('font/Quicksand-Bold.otf') format('opentype');
+	font-weight: bold;
+}
+@font-face {
+	font-family: quicksand;
+	src: local(Quicksand-Italic), url('font/Quicksand-Italic.otf') format('opentype');
+	font-style: italic;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "quicksand";
+	color: white;
+}
+p {
+	font-family: "quicksand";
+	color: #b9bdc9;
+}
+
+/************** COMPONENTS **************/
+
+/* Foot Note */
+.footnote {
+	font-size: small;
+}
+
+/* Panel */
+.panel {
+	background-color: #141414;
+	border-color: #000000;
+	border-width: 1px;
+	border-radius: 5px;
+}
+.panel h1, .panel h2, .panel h3, .panel h4, .panel h5, .panel h6 {
+	color: #ededed;
+}
+.panel p {
+	color: #b9bdc9;
+	padding-top: 5px;
+}
+
+/* Panel Tile */
+.panel.tile {
+	background-color: #000;
+	border-width: 1px;
+	border-color: black;
+	padding: 0px;
+	opacity: 0.85;
+}
+.panel.tile img {
+	width: 100%;
+	height: 250px;
+	border-color: black;
+	padding: 2px;
+}
+.panel.tile .panel {
+	padding: 10px 5px 10px 15px;
+}
+.panel.tile .panel h3 {
+	margin-bottom: 5px;
+	color: white;
+}
+.panel.tile .panel p {
+	color: white;
+}
+.panel.tile:hover {
+	opacity: 1.0;
+}
+.panel.tile a:hover {
+	text-decoration: none;
+	border-color: #5590dd;
+}
+
+/* Panel Link */
+.panel.link {
+	border-width: 1px;
+	border-color: #3d4851;
+}
+.panel.link:hover {
+	border-color: #5590dd;
+}
+
+/* Panel Frame */
+.panel.frame {
+	padding: 3px;
+}
+
+/* Panel Row Tile */
+.panel.rowtile {
+	background-repeat: no-repeat;
+	background-position: right;
+	opacity: 0.85;
+}
+.panel.rowtile:hover {
+	opacity: 1.0;
+}
+.panel.rowlogotile img {
+	float: left;
+	padding-right: 20px;
+}
+
+
+/* Label */
+.label.tip {
+	background-color: #ffe261;
+	color: #000000;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+	background-color: #000;
+	border: 0px;
+	padding: 0px;
+	margin-bottom: 0px;
+	font-size: large;
+}
+.breadcrumbs .current {
+	color: #b9bdc9;
+}
+
+/* Banner */
+.banner {
+	border-style: none;
+}
+.banner h1 {
+	color: #821e85;
+	font-size: 50px;
+	margin-bottom: 10px;
+}
+.banner p {
+	color: #b9bdc9;
+	margin-bottom: 5px;
+}
+
+/* Global components */
+#banner-home {
+	background-color: #000;
+	width: 100% !important;
+}
+
+
