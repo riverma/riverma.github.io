@@ -1,0 +1,13 @@
+#tablanotebook-preview {
+	background-image: url('tablanotebook-preview.png');
+	background-color: white;
+	color: black;
+}
+#tablapad-preview {
+	background-image: url('tablapad-preview.png');
+	background-color: white;
+	color: black;
+}
+#tablanotebook-preview h1,#tablapad-preview h1 {
+	color: black;
+}

@@ -152,3 +152,8 @@ p {
 }
 
 
+/************** SHARED RESOURCES **************/
+#virtualtabla-preview {
+	background-image: url('../content/portfolio/virtualtabla/virtual-tabla-preview.png');
+	background-color: black;
+}
