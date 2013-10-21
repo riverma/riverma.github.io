@@ -8,16 +8,16 @@ body {
 
 @font-face {
 	font-family: quicksand;
-	src: local(Quicksand-Regular), url('font/Quicksand-Regular.otf') format('opentype');
+	src: local(Quicksand-Regular), url('../font/Quicksand-Regular.otf') format('opentype');
 }
 @font-face {
 	font-family: quicksand;
-	src: local(Quicksand-Bold), url('font/Quicksand-Bold.otf') format('opentype');
+	src: local(Quicksand-Bold), url('../font/Quicksand-Bold.otf') format('opentype');
 	font-weight: bold;
 }
 @font-face {
 	font-family: quicksand;
-	src: local(Quicksand-Italic), url('font/Quicksand-Italic.otf') format('opentype');
+	src: local(Quicksand-Italic), url('../font/Quicksand-Italic.otf') format('opentype');
 	font-style: italic;
 }
 
