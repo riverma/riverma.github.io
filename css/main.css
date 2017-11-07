@@ -1,23 +1,23 @@
 /************** DOCUMENT STYLES **************/
 body {
 	background-color: #1e2122;
-	font-family: "quicksand", "Courier New", "Verdana", "Sans-Serif"; 
+	font-family: "quicksand", "Courier New", "Verdana", "Sans-Serif";
 	color: #b9bdc9;
 	padding-top: 15px;
 }
 
 @font-face {
 	font-family: quicksand;
-	src: local(Quicksand-Regular), url('font/Quicksand-Regular.otf') format('opentype');
+	src: local(Quicksand-Regular), url('../font/Quicksand-Regular.otf') format('opentype');
 }
 @font-face {
 	font-family: quicksand;
-	src: local(Quicksand-Bold), url('font/Quicksand-Bold.otf') format('opentype');
+	src: local(Quicksand-Bold), url('../font/Quicksand-Bold.otf') format('opentype');
 	font-weight: bold;
 }
 @font-face {
 	font-family: quicksand;
-	src: local(Quicksand-Italic), url('font/Quicksand-Italic.otf') format('opentype');
+	src: local(Quicksand-Italic), url('../font/Quicksand-Italic.otf') format('opentype');
 	font-style: italic;
 }
 
@@ -143,6 +143,12 @@ p {
 .banner p {
 	color: #b9bdc9;
 	margin-bottom: 5px;
+}
+
+/* Images */
+img.no-resize {
+  min-height: 200px;
+  min-width: 200px;
 }
 
 /* Global components */
