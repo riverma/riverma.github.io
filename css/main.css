@@ -159,7 +159,6 @@ img.no-resize {
 
 
 /************** SHARED RESOURCES **************/
-#virtualtabla-preview {
-	background-image: url('../content/portfolio/virtualtabla/virtual-tabla-preview.png');
-	background-color: black;
+img.tile-logo {
+	border: 25px solid black;
 }

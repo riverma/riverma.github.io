@@ -1,0 +1,14 @@
+#techcalisound-preview {
+	background-color: black;
+}
+#virtualtabla-preview {
+	background-image: url('virtualtabla/virtual-tabla-preview.png');
+	background-color: black;
+}
+#tablanotebook-preview {
+	background-image: url('tablanotebook/tablanotebook-preview.png');
+	background-color: white;
+}
+#tablanotebook-preview h1, #tablanotebook-preview h6 {
+	color: black;
+}
