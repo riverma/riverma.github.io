@@ -1,5 +1,10 @@
-#techcalisound-preview {
-	background-color: black;
+#tablage-preview {
+	background-image: url('tablage/tablage-background.jpg');
+	background-color: red;
+	background-blend-mode: screen;
+}
+#tablage-preview h1, #tablage-preview h6 {
+	color: black;
 }
 #virtualtabla-preview {
 	background-image: url('virtualtabla/virtual-tabla-preview.png');
