@@ -162,3 +162,50 @@ img.no-resize {
 img.tile-logo {
 	border: 25px solid black;
 }
+
+/************** Art panels **************/
+#realityingeometry-preview {
+	background-image: url('../img/art/realityingeometry-preview.png');
+	background-color: white;
+}
+#realityingeometry-preview h1, #realityingeometry-preview h6 {
+	color: black;
+}
+#iceoverfire-preview {
+	background-image: url('../img/art/iceoverfire-preview.png');
+	background-color: black;
+}
+#tzl8-preview {
+	background-color: black;
+}
+
+
+/************** Music panels **************/
+#tablage-preview {
+	background-image: url('../img/music/tablage-background.jpg');
+	background-color: red;
+	background-blend-mode: screen;
+}
+#tablage-preview h1, #tablage-preview h6 {
+	color: black;
+}
+#virtualtabla-preview {
+	background-image: url('../img/music/virtual-tabla-preview.png');
+	background-color: black;
+}
+#tablanotebook-preview {
+	background-image: url('../img/music/tablanotebook-preview.png');
+	background-color: white;
+}
+#tablanotebook-preview h1, #tablanotebook-preview h6 {
+	color: black;
+}
+
+/************** Writings panels **************/
+#businessownership-preview {
+	background-image: url('../img/writings/businessownership-preview.png');
+	background-color: white;
+}
+#businessownership-preview h1, #businessownership-preview h6 {
+	color: black;
+}
