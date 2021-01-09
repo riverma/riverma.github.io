@@ -178,7 +178,13 @@ img.tile-logo {
 #tzl8-preview {
 	background-color: black;
 }
-
+#leaf-preview {
+	background-image: url('../img/art/leaf-preview.jpeg');
+	background-color: white;
+}
+#leaf-preview h1, #leaf-preview h6 {
+	color: black;
+}
 
 /************** Music panels **************/
 #tablage-preview {
