@@ -182,8 +182,9 @@ img.tile-logo {
 	background-color: black;
 }
 #leaf-preview {
-	background-image: url('../img/art/leaf-preview.jpeg');
+	background-image: url('../img/art/collab-art-preview.jpeg');
 	background-color: white;
+	background-blend-mode: hard-light;
 }
 #leaf-preview h1, #leaf-preview h6 {
 	color: black;
