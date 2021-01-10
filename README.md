@@ -1,4 +1,4 @@
-_This repo contains the source code behind Rishi's website. This is a personal website. It probably doesn't make sense for you to use the source as-is. Instead, feel free to take bits and peices if you find it useful._
+_This repo contains the source code behind [Rishi's website](https://riverma.github.io/). This is a personal website. It probably doesn't make sense for you to use the source as-is. Instead, feel free to take bits and peices if you find it useful._
 
 # Install:
 1. Deploy this root directory to a directory on your
