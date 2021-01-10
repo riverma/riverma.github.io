@@ -168,7 +168,8 @@ img.tile-logo {
 /************** Art panels **************/
 #realityingeometry-preview {
 	background-image: url('../img/art/realityingeometry-preview.png');
-	background-color: white;
+	background-color: #CCCCFF;
+	background-blend-mode: lighten;
 }
 #realityingeometry-preview h1, #realityingeometry-preview h6 {
 	color: black;
