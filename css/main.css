@@ -4,6 +4,8 @@ body {
 	font-family: "quicksand", "Courier New", "Verdana", "Sans-Serif";
 	color: #b9bdc9;
 	padding-top: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 @font-face {
