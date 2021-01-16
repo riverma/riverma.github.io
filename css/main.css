@@ -165,6 +165,21 @@ img.tile-logo {
 	border: 25px solid black;
 }
 
+/************** Talks panels **************/
+#ksummit2019-preview {
+	background-image: url('../img/talks/ksummit2019-preview.png');
+	background-color: black;
+}
+
+/************** Publications panels **************/
+#paper-preview {
+	background-image: url('../img/publications/paper-preview.png');
+	background-color: white;
+}
+#paper-preview h1, #paper-preview h6 {
+	color: black;
+}
+
 /************** Art panels **************/
 #realityingeometry-preview {
 	background-image: url('../img/art/realityingeometry-preview.png');
