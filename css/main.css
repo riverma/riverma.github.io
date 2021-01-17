@@ -182,7 +182,7 @@ img.tile-logo {
 
 /************** Art panels **************/
 #realityingeometry-preview {
-	background-image: url('../img/art/realityingeometry-preview.png');
+	background-image: url('../img/media/realityingeometry-preview.png');
 	background-color: #CCCCFF;
 	background-blend-mode: lighten;
 }
@@ -190,18 +190,18 @@ img.tile-logo {
 	color: black;
 }
 #iceoverfire-preview {
-	background-image: url('../img/art/iceoverfire-preview.png');
+	background-image: url('../img/media/iceoverfire-preview.png');
 	background-color: black;
 }
 #tzl8-preview {
-	background-image: url('../img/art/tzl8_logo.jpeg');
+	background-image: url('../img/media/tzl8_logo.jpeg');
 	background-color: white;
 }
 #tzl8-preview h1, #tzl8-preview h6 {
 	color: white;
 }
 #leaf-preview {
-	background-image: url('../img/art/collab-art-preview.jpeg');
+	background-image: url('../img/media/collab-art-preview.jpeg');
 	background-color: white;
 }
 #leaf-preview h1, #leaf-preview h6 {
@@ -210,7 +210,7 @@ img.tile-logo {
 
 /************** Music panels **************/
 #tablage-preview {
-	background-image: url('../img/music/tablage-background.jpg');
+	background-image: url('../img/media/tablage-background.jpg');
 	background-color: red;
 	background-blend-mode: screen;
 }
@@ -218,11 +218,11 @@ img.tile-logo {
 	color: black;
 }
 #virtualtabla-preview {
-	background-image: url('../img/music/virtual-tabla-preview.png');
+	background-image: url('../img/media/virtual-tabla-preview.png');
 	background-color: black;
 }
 #tablanotebook-preview {
-	background-image: url('../img/music/tablanotebook-preview.png');
+	background-image: url('../img/media/tablanotebook-preview.png');
 	background-color: white;
 }
 #tablanotebook-preview h1, #tablanotebook-preview h6 {
