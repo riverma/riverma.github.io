@@ -194,12 +194,15 @@ img.tile-logo {
 	background-color: black;
 }
 #tzl8-preview {
-	background-color: black;
+	background-image: url('../img/art/tzl8_logo.jpeg');
+	background-color: white;
+}
+#tzl8-preview h1, #tzl8-preview h6 {
+	color: white;
 }
 #leaf-preview {
 	background-image: url('../img/art/collab-art-preview.jpeg');
 	background-color: white;
-	background-blend-mode: hard-light;
 }
 #leaf-preview h1, #leaf-preview h6 {
 	color: black;
