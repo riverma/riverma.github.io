@@ -170,6 +170,20 @@ img.tile-logo {
 	background-image: url('../img/talks/ksummit2019-preview.png');
 	background-color: black;
 }
+#ga-preview {
+	background-image: url('../img/talks/ga-preview.png');
+	background-color: white;
+}
+#ga-preview h1, #ga-preview h6 {
+	color: black;
+}
+#asf-preview {
+	background-image: url('../img/talks/asf-preview.png');
+	background-color: white;
+}
+#asf-preview h1, #asf-preview h6 {
+	color: black;
+}
 
 /************** Publications panels **************/
 #paper-preview {
