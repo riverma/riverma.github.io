@@ -166,6 +166,10 @@ img.tile-logo {
 }
 
 /************** Talks panels **************/
+#psida-preview {
+	background-image: url('../img/talks/psida-preview.jpg');
+	background-color: black;
+}
 #ksummit2019-preview {
 	background-image: url('../img/talks/ksummit2019-preview.png');
 	background-color: black;
