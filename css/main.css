@@ -166,6 +166,14 @@ img.tile-logo {
 }
 
 /************** Talks panels **************/
+#arbejdernes-preview {
+	background-image: url('../img/talks/arbejdernes-preview.png');
+	background-color: black;
+}
+#beloit-preview {
+	background-image: url('../img/talks/beloit-preview.png');
+	background-color: black;
+}
 #psida-preview {
 	background-image: url('../img/talks/psida-preview.jpg');
 	background-color: black;
