@@ -12,21 +12,29 @@ body {
 	font-family: quicksand;
 	src: local(Quicksand-Regular), url('../font/Quicksand-Regular.otf') format('opentype');
 }
+
 @font-face {
 	font-family: quicksand;
 	src: local(Quicksand-Bold), url('../font/Quicksand-Bold.otf') format('opentype');
 	font-weight: bold;
 }
+
 @font-face {
 	font-family: quicksand;
 	src: local(Quicksand-Italic), url('../font/Quicksand-Italic.otf') format('opentype');
 	font-style: italic;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	font-family: "quicksand";
 	color: white;
 }
+
 p {
 	font-family: "quicksand";
 	color: #b9bdc9;
@@ -46,9 +54,16 @@ p {
 	border-width: 1px;
 	border-radius: 5px;
 }
-.panel h1, .panel h2, .panel h3, .panel h4, .panel h5, .panel h6 {
+
+.panel h1,
+.panel h2,
+.panel h3,
+.panel h4,
+.panel h5,
+.panel h6 {
 	color: #ededed;
 }
+
 .panel p {
 	color: #b9bdc9;
 	padding-top: 5px;
@@ -62,25 +77,31 @@ p {
 	padding: 0px;
 	opacity: 0.85;
 }
+
 .panel.tile img {
 	width: 100%;
 	height: 250px;
 	border-color: black;
 	padding: 2px;
 }
+
 .panel.tile .panel {
 	padding: 10px 5px 10px 15px;
 }
+
 .panel.tile .panel h3 {
 	margin-bottom: 5px;
 	color: white;
 }
+
 .panel.tile .panel p {
 	color: white;
 }
+
 .panel.tile:hover {
 	opacity: 1.0;
 }
+
 .panel.tile a:hover {
 	text-decoration: none;
 	border-color: #5590dd;
@@ -91,6 +112,7 @@ p {
 	border-width: 1px;
 	border-color: #3d4851;
 }
+
 .panel.link:hover {
 	border-color: #5590dd;
 }
@@ -106,9 +128,11 @@ p {
 	background-position: right;
 	opacity: 0.85;
 }
+
 .panel.rowtile:hover {
 	opacity: 1.0;
 }
+
 .panel.rowlogotile img {
 	float: left;
 	padding-right: 20px;
@@ -129,6 +153,7 @@ p {
 	margin-bottom: 0px;
 	font-size: large;
 }
+
 .breadcrumbs .current {
 	color: #b9bdc9;
 }
@@ -137,11 +162,13 @@ p {
 .banner {
 	border-style: none;
 }
+
 .banner h1 {
 	color: #821e85;
 	font-size: 50px;
 	margin-bottom: 10px;
 }
+
 .banner p {
 	color: #b9bdc9;
 	margin-bottom: 5px;
@@ -149,8 +176,8 @@ p {
 
 /* Images */
 img.no-resize {
-  min-height: 200px;
-  min-width: 200px;
+	min-height: 200px;
+	min-width: 200px;
 }
 
 /* Global components */
@@ -166,34 +193,48 @@ img.tile-logo {
 }
 
 /************** Talks panels **************/
+#linuxfoundation-preview {
+	background-image: url('../img/talks/linuxfoundation-preview.png');
+	background-color: black;
+}
+
 #arbejdernes-preview {
 	background-image: url('../img/talks/arbejdernes-preview.png');
 	background-color: black;
 }
+
 #beloit-preview {
 	background-image: url('../img/talks/beloit-preview.png');
 	background-color: black;
 }
+
 #psida-preview {
 	background-image: url('../img/talks/psida-preview.jpg');
 	background-color: black;
 }
+
 #ksummit2019-preview {
 	background-image: url('../img/talks/ksummit2019-preview.png');
 	background-color: black;
 }
+
 #ga-preview {
 	background-image: url('../img/talks/ga-preview.png');
 	background-color: white;
 }
-#ga-preview h1, #ga-preview h6 {
+
+#ga-preview h1,
+#ga-preview h6 {
 	color: black;
 }
+
 #asf-preview {
 	background-image: url('../img/talks/asf-preview.png');
 	background-color: white;
 }
-#asf-preview h1, #asf-preview h6 {
+
+#asf-preview h1,
+#asf-preview h6 {
 	color: black;
 }
 
@@ -202,7 +243,9 @@ img.tile-logo {
 	background-image: url('../img/publications/paper-preview.png');
 	background-color: white;
 }
-#paper-preview h1, #paper-preview h6 {
+
+#paper-preview h1,
+#paper-preview h6 {
 	color: black;
 }
 
@@ -212,25 +255,34 @@ img.tile-logo {
 	background-color: #CCCCFF;
 	background-blend-mode: lighten;
 }
-#realityingeometry-preview h1, #realityingeometry-preview h6 {
+
+#realityingeometry-preview h1,
+#realityingeometry-preview h6 {
 	color: black;
 }
+
 #iceoverfire-preview {
 	background-image: url('../img/media/iceoverfire-preview.png');
 	background-color: black;
 }
+
 #tzl8-preview {
 	background-image: url('../img/media/tzl8-header.jpg');
 	background-color: white;
 }
-#tzl8-preview h1, #tzl8-preview h6 {
+
+#tzl8-preview h1,
+#tzl8-preview h6 {
 	color: white;
 }
+
 #leaf-preview {
 	background-image: url('../img/media/collab-art-preview.jpeg');
 	background-color: white;
 }
-#leaf-preview h1, #leaf-preview h6 {
+
+#leaf-preview h1,
+#leaf-preview h6 {
 	color: black;
 }
 
@@ -240,18 +292,24 @@ img.tile-logo {
 	background-color: red;
 	background-blend-mode: screen;
 }
-#tablage-preview h1, #tablage-preview h6 {
+
+#tablage-preview h1,
+#tablage-preview h6 {
 	color: black;
 }
+
 #virtualtabla-preview {
 	background-image: url('../img/media/virtual-tabla-preview.png');
 	background-color: black;
 }
+
 #tablanotebook-preview {
 	background-image: url('../img/media/tablanotebook-preview.png');
 	background-color: white;
 }
-#tablanotebook-preview h1, #tablanotebook-preview h6 {
+
+#tablanotebook-preview h1,
+#tablanotebook-preview h6 {
 	color: black;
 }
 
@@ -260,6 +318,8 @@ img.tile-logo {
 	background-image: url('../img/publications/businessownership-preview.png');
 	background-color: white;
 }
-#businessownership-preview h1, #businessownership-preview h6 {
+
+#businessownership-preview h1,
+#businessownership-preview h6 {
 	color: black;
 }
