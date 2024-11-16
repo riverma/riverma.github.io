@@ -195,18 +195,25 @@ img.tile-logo {
 
 /************** Talks panels **************/
 #pbsnewshour-preview {
-	background-image: url('../img/talks/pbs-newshour.jpg');
 	background-color: black;
 }
 
 #scalelinux-preview {
-	background-image: url('../img/talks/scalelinux-preview.png');
-	background-color: black;
+	background-color: white;
+}
+#scalelinux-preview h1,
+#scalelinux-preview h6 {
+	color: black;
+	text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7); /* add a dark shadow for light backgrounds */
 }
 
 #linuxfoundation-preview {
-	background-image: url('../img/talks/linuxfoundation-preview.png');
-	background-color: black;
+	background-color: white;
+}
+#linuxfoundation-preview h1,
+#linuxfoundation-preview h6 {
+	color: black;
+	text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7); /* add a dark shadow for light backgrounds */
 }
 
 #arbejdernes-preview {
@@ -256,7 +263,6 @@ img.tile-logo {
 }
 
 #forbes-preview {
-	background-image: url('../img/publications/forbes-preview.jpg');
 	background-color: white;
 }
 #forbes-preview h1,
