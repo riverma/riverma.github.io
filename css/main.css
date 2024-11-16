@@ -33,6 +33,7 @@ h5,
 h6 {
 	font-family: "quicksand";
 	color: white;
+	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9); /* add a dark shadow for light backgrounds */
 }
 
 p {
@@ -193,6 +194,16 @@ img.tile-logo {
 }
 
 /************** Talks panels **************/
+#pbsnewshour-preview {
+	background-image: url('../img/talks/pbs-newshour.jpg');
+	background-color: black;
+}
+
+#scalelinux-preview {
+	background-image: url('../img/talks/scalelinux-preview.png');
+	background-color: black;
+}
+
 #linuxfoundation-preview {
 	background-image: url('../img/talks/linuxfoundation-preview.png');
 	background-color: black;
@@ -239,6 +250,20 @@ img.tile-logo {
 }
 
 /************** Publications panels **************/
+#nytimes-preview {
+	background-image: url('../img/publications/nytimes-preview.jpg');
+	background-color: black;
+}
+
+#forbes-preview {
+	background-image: url('../img/publications/forbes-preview.jpg');
+	background-color: white;
+}
+#forbes-preview h1,
+#forbes-preview h6 {
+	color: rgb(0, 132, 255);
+}
+
 #paper-preview {
 	background-image: url('../img/publications/paper-preview.png');
 	background-color: white;
