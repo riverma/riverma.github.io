@@ -33,7 +33,7 @@ h5,
 h6 {
 	font-family: "quicksand";
 	color: white;
-	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9); /* add a dark shadow for light backgrounds */
+	text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.9); /* add a dark shadow for light backgrounds */
 }
 
 p {
@@ -261,7 +261,9 @@ img.tile-logo {
 }
 #forbes-preview h1,
 #forbes-preview h6 {
-	color: rgb(0, 132, 255);
+	color: black;
+	text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7); /* add a dark shadow for light backgrounds */
+
 }
 
 #paper-preview {
@@ -292,8 +294,8 @@ img.tile-logo {
 }
 
 #tzl8-preview {
-	background-image: url('../img/media/tzl8-header.jpg');
-	background-color: white;
+	background-image: url('../img/media/tzl8-logo.png');
+	background-color: black;
 }
 
 #tzl8-preview h1,
