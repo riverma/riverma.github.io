@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Philosophy Cards</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="instructions-overlay" id="instructionsOverlay">
+        <div class="instructions-panel">
+            <h2>Philosophy Cards</h2>
+            <p>Welcome to a game of philosophical exploration!</p>
+            <ul>
+                <li>Take turns tapping the screen to reveal questions</li>
+                <li>Answer thoughtfully and honestly</li>
+                <li>Questions progress from playful to profound</li>
+                <li>Switch who reads after each card</li>
+            </ul>
+            <div class="player-selector">
+                <label for="playerCount">Number of Players:</label>
+                <div class="player-counter">
+                    <button id="decreaseButton" class="counter-button">-</button>
+                    <input type="number" id="playerCount" min="2" max="8" value="2" readonly>
+                    <button id="increaseButton" class="counter-button">+</button>
+                </div>
+            </div>
+            <button id="startButton">Start Game</button>
+        </div>
+    </div>
+    
+    <main class="game-container" id="gameContainer">
+        <div class="turn-indicator" id="turnIndicator">Player 1's Turn</div>
+        <div class="card" id="card">
+            <p class="question" id="questionText">Tap to begin</p>
+        </div>
+        <div class="tap-hint" id="tapHint">Tap anywhere to continue</div>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>

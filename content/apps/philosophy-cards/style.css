@@ -1,0 +1,233 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    touch-action: manipulation;
+}
+
+.instructions-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.instructions-panel {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.instructions-panel h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.instructions-panel p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.instructions-panel ul {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.instructions-panel li {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.instructions-panel li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #888;
+}
+
+.player-selector {
+    margin-bottom: 30px;
+}
+
+.player-selector label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.player-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.counter-button {
+    background-color: #f0f0f0;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.counter-button:hover {
+    background-color: #e0e0e0;
+}
+
+.counter-button:active {
+    background-color: #d0d0d0;
+}
+
+#playerCount {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    font-size: 18px;
+    border: 2px solid #f0f0f0;
+    border-radius: 8px;
+    background-color: white;
+}
+
+#startButton {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#startButton:active {
+    background-color: #555;
+}
+
+.game-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+.turn-indicator {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: none;
+}
+
+.card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.question {
+    font-size: clamp(24px, 5vw, 32px);
+    line-height: 1.6;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tap-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #aaa;
+    opacity: 0.6;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .question {
+        font-size: 36px;
+    }
+    
+    .instructions-panel {
+        padding: 40px;
+    }
+    
+    .instructions-panel h2 {
+        font-size: 32px;
+    }
+    
+    .instructions-panel p,
+    .instructions-panel li {
+        font-size: 18px;
+    }
+}
