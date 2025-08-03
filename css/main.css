@@ -356,3 +356,23 @@ img.tile-logo {
 #businessownership-preview h6 {
 	color: black;
 }
+
+#philosophy-game-preview {
+	background-color: #4a5568;
+	background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+#philosophy-game-preview h1,
+#philosophy-game-preview h6 {
+	color: white;
+}
+
+#unexpected-adventures-preview {
+	background-color: #17a2b8;
+	background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+#unexpected-adventures-preview h1,
+#unexpected-adventures-preview h6 {
+	color: white;
+}

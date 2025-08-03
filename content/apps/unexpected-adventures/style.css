@@ -1,0 +1,468 @@
+/* CSS Variables for Design System */
+:root {
+    --primary-color: #17a2b8;
+    --secondary-color: #fd7e14;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --dark-gray: #212529;
+    --white: #ffffff;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+    --border-radius: 8px;
+    --control-panel-padding: 12px;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--dark-gray);
+    overflow: hidden;
+}
+
+/* App Container */
+#app {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+/* Map Container */
+#map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* Control Panel */
+.control-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: var(--control-panel-padding);
+    display: flex;
+    gap: 8px;
+    z-index: 1000;
+    max-width: calc(100vw - 20px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Buttons */
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    min-height: 44px;
+    background: var(--medium-gray);
+    color: var(--dark-gray);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: #138496;
+}
+
+.btn-secondary {
+    background: var(--light-gray);
+    color: var(--dark-gray);
+}
+
+.btn-secondary:hover {
+    background: var(--medium-gray);
+}
+
+.btn-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* POI Panel */
+.poi-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    background: var(--white);
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.poi-panel:not(.hidden) {
+    transform: translateX(0);
+}
+
+.poi-panel-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--dark-gray);
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.poi-panel-close:hover {
+    background: var(--light-gray);
+}
+
+.poi-panel-title {
+    padding: 20px;
+    border-bottom: 1px solid var(--medium-gray);
+    margin: 0;
+    font-size: 20px;
+}
+
+.poi-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--dark-gray);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--light-gray);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.poi-list {
+    padding: 20px;
+}
+
+.poi-item {
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: var(--transition);
+}
+
+.poi-item:hover {
+    box-shadow: var(--shadow);
+}
+
+.poi-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: var(--dark-gray);
+}
+
+.poi-type {
+    font-size: 14px;
+    color: #6c757d;
+    text-transform: capitalize;
+    margin-bottom: 8px;
+}
+
+.poi-distance {
+    font-size: 14px;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.poi-go-here {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--secondary-color);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.poi-go-here:hover {
+    background: #e56b08;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--dark-gray);
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    background: var(--light-gray);
+}
+
+.modal h2 {
+    margin-bottom: 16px;
+    color: var(--primary-color);
+}
+
+.modal h3 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+    color: var(--dark-gray);
+}
+
+.modal p, .modal li {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.modal a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.modal a:hover {
+    text-decoration: underline;
+}
+
+/* Custom Map Styles */
+.leaflet-container {
+    font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.leaflet-popup-content {
+    margin: 12px;
+    font-size: 14px;
+}
+
+/* Adventure Marker Styles */
+.adventure-marker {
+    background: var(--secondary-color);
+    border: 3px solid var(--white);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.adventure-marker:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-hover);
+}
+
+.adventure-marker svg {
+    width: 16px;
+    height: 16px;
+    color: var(--white);
+}
+
+/* User Location Marker */
+.user-location-marker {
+    background: var(--primary-color);
+    border: 3px solid var(--white);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    box-shadow: var(--shadow);
+    position: relative;
+}
+
+.user-location-marker::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Selected Area Styles */
+.leaflet-draw-toolbar {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.leaflet-draw-toolbar a {
+    color: var(--dark-gray);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .control-panel {
+        bottom: 10px;
+        padding: 8px;
+        gap: 6px;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .btn-icon {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .poi-panel {
+        max-width: 100%;
+    }
+    
+    .modal-content {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn span {
+        display: none;
+    }
+    
+    .btn {
+        padding: 10px;
+    }
+    
+    .control-panel {
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: calc(100vw - 16px);
+    }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Loading State */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Focus Styles for Accessibility */
+button:focus,
+a:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .control-panel,
+    .poi-panel,
+    .modal {
+        display: none !important;
+    }
+}
