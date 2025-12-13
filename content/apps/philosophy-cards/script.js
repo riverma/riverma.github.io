@@ -39,6 +39,9 @@ const questions = [
     { type: 'worldview', difficulty: 'medium', text: 'Can meaning exist without consciousness to perceive it?' },
     { type: 'personal', difficulty: 'medium', text: 'How do you know when a belief is truly yours?' },
     { type: 'worldview', difficulty: 'medium', text: 'Is suffering necessary for growth or just something we tell ourselves?' },
+    { type: 'worldview', difficulty: 'medium', text: 'Is beauty a real property of the universe or something we make up?' },
+    { type: 'worldview', difficulty: 'medium', text: 'Can language define truth or does naming it limit it?' },
+    { type: 'personal', difficulty: 'medium', text: 'When did you become aware of something you believed but later realized you were conditioned to believe?' },
 
     // Hard/Deep Questions
     { type: 'personal', difficulty: 'hard', text: 'What part of your identity would you be willing to lose, and what part could you never give up?' },
@@ -59,7 +62,12 @@ const questions = [
     { type: 'personal', difficulty: 'hard', text: 'What have you had to destroy in yourself to survive?' },
     { type: 'worldview', difficulty: 'hard', text: 'Is love a truth about the universe or a human invention?' },
     { type: 'personal', difficulty: 'hard', text: 'What would you be willing to forget to be happy?' },
-    { type: 'personal', difficulty: 'hard', text: 'How do you cope with the vastness of what you\'ll never know?' }
+    { type: 'personal', difficulty: 'hard', text: 'How do you cope with the vastness of what you\'ll never know?' },
+    { type: 'worldview', difficulty: 'hard', text: 'What is the \'I\'... truly? What is the self?' },
+    { type: 'worldview', difficulty: 'hard', text: 'Which came first, being or non-being?' },
+    { type: 'personal', difficulty: 'hard', text: 'How can you live without fear?' },
+    { type: 'worldview', difficulty: 'hard', text: 'What is the nature of love given the vast universe?' },
+    { type: 'worldview', difficulty: 'hard', text: 'Is the observer different from the observed?' }
 ];
 
 let currentPlayer = 1;
