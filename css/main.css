@@ -376,3 +376,56 @@ img.tile-logo {
 #unexpected-adventures-preview h6 {
 	color: white;
 }
+/************** Artwork Portfolio **************/
+#artportfolio-preview {
+	background-image:
+		linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.45) 100%),
+		url('../img/art-portfolio/banner.jpg');
+	background-color: black;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+#artportfolio-preview h1,
+#artportfolio-preview h6 {
+	color: white;
+	text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+.artwork-item {
+	margin-bottom: 4.5em;
+}
+
+.artwork-item h3 {
+	margin-top: 0;
+	margin-bottom: 0.5em;
+}
+
+.artwork-item > p {
+	margin-bottom: 1.6em;
+}
+
+.artwork-figure {
+	max-width: 720px;
+	margin: 0 auto;
+}
+
+.artwork-figure img {
+	width: 100%;
+	display: block;
+	box-sizing: border-box;
+	padding: 10px;
+	background: #f5f1e8;
+	border: 1px solid #3d4851;
+	border-radius: 4px;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.artwork-figure .meta {
+	color: #888;
+	font-style: italic;
+	font-size: 0.9em;
+	margin: 0.8em 0 0;
+	text-align: center;
+}
