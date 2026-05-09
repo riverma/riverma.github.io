@@ -1,431 +1,555 @@
-/************** DOCUMENT STYLES **************/
-body {
-	background-color: #1e2122;
-	font-family: "quicksand", "Courier New", "Verdana", "Sans-Serif";
-	color: #b9bdc9;
-	padding-top: 15px;
-	padding-left: 15px;
-	padding-right: 15px;
+/* riverma.github.io — minimalist condensed-sans theme */
+
+@font-face {
+	font-family: "Barlow Condensed";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("../font/BarlowCondensed-Regular.woff2") format("woff2");
 }
 
 @font-face {
-	font-family: quicksand;
-	src: local(Quicksand-Regular), url('../font/Quicksand-Regular.otf') format('opentype');
+	font-family: "Barlow Condensed";
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("../font/BarlowCondensed-Medium.woff2") format("woff2");
 }
 
 @font-face {
-	font-family: quicksand;
-	src: local(Quicksand-Bold), url('../font/Quicksand-Bold.otf') format('opentype');
-	font-weight: bold;
+	font-family: "Barlow Condensed";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("../font/BarlowCondensed-Bold.woff2") format("woff2");
 }
 
 @font-face {
-	font-family: quicksand;
-	src: local(Quicksand-Italic), url('../font/Quicksand-Italic.otf') format('opentype');
+	font-family: "Barlow Condensed";
 	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url("../font/BarlowCondensed-Italic.woff2") format("woff2");
 }
 
+@font-face {
+	font-family: "Barlow Condensed";
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url("../font/BarlowCondensed-BoldItalic.woff2") format("woff2");
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: #fff;
+	color: #111;
+	font-family: "Futura PT Condensed", "Futura Condensed", "Barlow Condensed", "Tw Cen MT Condensed", sans-serif;
+	font-size: 19px;
+	line-height: 1.5;
+	font-weight: 400;
+	font-feature-settings: "kern", "liga";
+	max-width: 760px;
+	margin: 0 auto;
+	padding: 56px 28px 72px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-	font-family: "quicksand";
-	color: white;
-	text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.9); /* add a dark shadow for light backgrounds */
+	color: #111;
+	font-weight: 700;
+	line-height: 1.15;
+	margin: 0 0 0.5em;
+	text-wrap: balance;
+	letter-spacing: 0;
+}
+
+h1 {
+	font-size: 2.6em;
+	margin-bottom: 0.2em;
+	letter-spacing: 0.01em;
+}
+
+h2 {
+	font-size: 1.6em;
+	margin-top: 2.2em;
+	margin-bottom: 0.7em;
+	padding-bottom: 0.25em;
+	border-bottom: 1px solid #111;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-weight: 700;
+}
+
+h3 {
+	font-size: 1.2em;
+	margin-top: 1.4em;
+	margin-bottom: 0.3em;
+	font-weight: 500;
+	letter-spacing: 0.02em;
 }
 
 p {
-	font-family: "quicksand";
-	color: #b9bdc9;
+	margin: 0 0 1em;
 }
 
-/************** COMPONENTS **************/
+/* Links — browser-default blue/purple, no overrides */
 
-/* Foot Note */
-.footnote {
-	font-size: small;
+/* Lists */
+ul,
+ol {
+	margin: 0 0 1em;
+	padding-left: 1.4em;
 }
 
-/* Panel */
-.panel {
-	background-color: #141414;
-	border-color: #000000;
-	border-width: 1px;
-	border-radius: 5px;
+ul ul,
+ol ol,
+ul ol,
+ol ul {
+	margin: 0.2em 0 0.5em;
 }
 
-.panel h1,
-.panel h2,
-.panel h3,
-.panel h4,
-.panel h5,
-.panel h6 {
-	color: #ededed;
+li {
+	margin: 0.2em 0;
 }
 
-.panel p {
-	color: #b9bdc9;
-	padding-top: 5px;
+/* Horizontal rule between sections */
+hr {
+	border: 0;
+	border-top: 1px solid #111;
+	margin: 2.8em 0 2em;
 }
 
-/* Panel Tile */
-.panel.tile {
-	background-color: #000;
-	border-width: 1px;
-	border-color: black;
-	padding: 0px;
-	opacity: 0.85;
+/* Quotes */
+blockquote {
+	margin: 1.2em 0 1.2em 1em;
+	padding-left: 1em;
+	border-left: 2px solid #ccc;
+	color: #444;
+	font-style: italic;
 }
 
-.panel.tile img {
-	width: 100%;
-	height: 250px;
-	border-color: black;
-	padding: 2px;
+blockquote cite {
+	display: block;
+	font-style: normal;
+	font-size: 0.9em;
+	color: #666;
+	margin-top: 0.3em;
 }
 
-.panel.tile .panel {
-	padding: 10px 5px 10px 15px;
+em,
+i,
+cite {
+	font-style: italic;
 }
 
-.panel.tile .panel h3 {
-	margin-bottom: 5px;
-	color: white;
+strong,
+b {
+	font-weight: 700;
 }
 
-.panel.tile .panel p {
-	color: white;
+/* Page header */
+.page-header h1 {
+	margin-top: 0;
 }
 
-.panel.tile:hover {
-	opacity: 1.0;
-}
-
-.panel.tile a:hover {
+.page-header h1 a {
+	color: #111;
 	text-decoration: none;
-	border-color: #5590dd;
 }
 
-/* Panel Link */
-.panel.link {
-	border-width: 1px;
-	border-color: #3d4851;
-}
-
-.panel.link:hover {
-	border-color: #5590dd;
-}
-
-/* Panel Frame */
-.panel.frame {
-	padding: 3px;
-}
-
-/* Panel Row Tile */
-.panel.rowtile {
-	background-repeat: no-repeat;
-	background-position: right;
-	opacity: 0.85;
-}
-
-.panel.rowtile:hover {
-	opacity: 1.0;
-}
-
-.panel.rowlogotile img {
-	float: left;
-	padding-right: 20px;
-}
-
-
-/* Label */
-.label.tip {
-	background-color: #ffe261;
-	color: #000000;
+.page-header h1 a:hover {
+	color: #444;
 }
 
 /* Breadcrumbs */
 .breadcrumbs {
-	background-color: #000;
-	border: 0px;
-	padding: 0px;
-	margin-bottom: 0px;
-	font-size: large;
+	font-size: 0.95em;
+	color: #555;
+	margin: 0 0 1.6em;
+	padding: 0;
+	list-style: none;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
 }
 
-.breadcrumbs .current {
-	color: #b9bdc9;
+.breadcrumbs li {
+	display: inline;
+	margin: 0;
 }
 
-/* Banner */
-.banner {
-	border-style: none;
+.breadcrumbs li + li::before {
+	content: "  /  ";
+	color: #999;
 }
 
-.banner h1 {
-	color: #821e85;
-	font-size: 50px;
-	margin-bottom: 10px;
+.breadcrumbs li.current {
+	color: #555;
 }
 
-.banner p {
-	color: #b9bdc9;
-	margin-bottom: 5px;
+/* breadcrumb links inherit the browser default link color */
+
+/* Footer */
+footer {
+	margin-top: 4em;
+	padding-top: 1.2em;
+	border-top: 1px solid #ddd;
+	font-size: 0.95em;
+	color: #666;
 }
 
-/* Images */
-img.no-resize {
-	min-height: 200px;
-	min-width: 200px;
+footer p {
+	margin: 0.4em 0;
 }
 
-/* Global components */
-#banner-home {
-	background-color: #000;
-	width: 100% !important;
+/* Contact section: scrape-hardened addresses */
+.contact-list {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
 }
 
-
-/************** SHARED RESOURCES **************/
-img.tile-logo {
-	border: 25px solid black;
+.contact-list li {
+	margin: 0.5em 0;
 }
 
-/************** Talks panels **************/
-#pbsnewshour-preview {
-	background-color: black;
+.contact-label {
+	display: inline-block;
+	min-width: 11em;
+	color: #555;
+	font-style: italic;
 }
 
-#scalelinux-preview {
-	background-color: white;
-}
-#scalelinux-preview h1,
-#scalelinux-preview h6 {
-	color: black;
-	text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7); /* add a dark shadow for light backgrounds */
+.contact-list .hidden {
+	display: none;
 }
 
-#linuxfoundation-preview {
-	background-color: white;
-}
-#linuxfoundation-preview h1,
-#linuxfoundation-preview h6 {
-	color: black;
-	text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7); /* add a dark shadow for light backgrounds */
+.contact-row-qr {
+	display: flex;
+	align-items: flex-start;
+	gap: 0;
 }
 
-#arbejdernes-preview {
-	background-image: url('../img/talks/arbejdernes-preview.png');
-	background-color: black;
+.contact-qr {
+	display: inline-block;
 }
 
-#beloit-preview {
-	background-image: url('../img/talks/beloit-preview.png');
-	background-color: black;
+.contact-qr-label {
+	display: block;
+	font-size: 0.9em;
+	color: #555;
+	margin-bottom: 0.4em;
 }
 
-#psida-preview {
-	background-image: url('../img/talks/psida-preview.jpg');
-	background-color: black;
+.contact-qr img {
+	display: block;
+	border: 1px solid #e0dcd3;
+	border-radius: 4px;
+	background: #fff;
+	padding: 6px;
 }
 
-#ksummit2019-preview {
-	background-image: url('../img/talks/ksummit2019-preview.png');
-	background-color: black;
+.contact-qr-fallback {
+	display: block;
+	margin-top: 0.6em;
+	font-size: 0.85em;
+	color: #555;
+	max-width: 320px;
 }
 
-#ga-preview {
-	background-image: url('../img/talks/ga-preview.png');
-	background-color: white;
+.simplex-link {
+	word-break: break-all;
 }
 
-#ga-preview h1,
-#ga-preview h6 {
-	color: black;
+/* Institutions list (Current Work, Press) — logo as title, sub-bullets underneath */
+.institutions {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
 }
 
-#asf-preview {
-	background-image: url('../img/talks/asf-preview.png');
-	background-color: white;
+.institutions > li {
+	margin: 0 0 1.6em;
+	padding: 0;
 }
 
-#asf-preview h1,
-#asf-preview h6 {
-	color: black;
+.institutions > li:last-child {
+	margin-bottom: 0;
 }
 
-/************** Publications panels **************/
-#nytimes-preview {
-	background-image: url('../img/publications/nytimes-preview.jpg');
-	background-color: black;
+.institution-logo {
+	display: block;
+	width: auto;
+	margin: 0 0 0.5em;
 }
 
-#forbes-preview {
-	background-color: white;
-}
-#forbes-preview h1,
-#forbes-preview h6 {
-	color: black;
-	text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7); /* add a dark shadow for light backgrounds */
-
+/* PBS NewsHour wordmark renders heavier than the other press logos at the same height,
+   so trim it down to match optical weight */
+.institution-logo--pbs {
+	width: 195px;
+	height: 21px;
 }
 
-#paper-preview {
-	background-image: url('../img/publications/paper-preview.png');
-	background-color: white;
+/* When no logo exists on the web, show the institution name in a larger, tracked-out wordmark style */
+.institution-name {
+	display: block;
+	font-size: 1.45em;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	margin: 0 0 0.5em;
+	line-height: 1.1;
+	color: #111;
 }
 
-#paper-preview h1,
-#paper-preview h6 {
-	color: black;
+/* Current Work institution tiles: bordered card with a faded-stamp logo watermark behind the text.
+   Selector deliberately matches `.institutions > li`'s specificity (0,1,1) and comes later in the
+   stylesheet so the per-tile padding wins over the bare-li reset. */
+.institutions > li.institution-tile {
+	position: relative;
+	padding: 12px 19px;
+	margin-bottom: 16px;
+	background-color: #fafafa;
+	border: 1px solid #d8d4cc;
+	border-radius: 4px;
+	overflow: hidden;
 }
 
-/************** Art panels **************/
-#realityingeometry-preview {
-	background-image: url('../img/media/realityingeometry-preview.png');
-	background-color: #CCCCFF;
-	background-blend-mode: lighten;
-}
-
-#realityingeometry-preview h1,
-#realityingeometry-preview h6 {
-	color: black;
-}
-
-#iceoverfire-preview {
-	background-image: url('../img/media/iceoverfire-preview.png');
-	background-color: black;
-}
-
-#tzl8-preview {
-	background-image: url('../img/media/tzl8-logo.png');
-	background-color: black;
-}
-
-#tzl8-preview h1,
-#tzl8-preview h6 {
-	color: white;
-}
-
-#leaf-preview {
-	background-image: url('../img/media/collab-art-preview.jpeg');
-	background-color: white;
-}
-
-#leaf-preview h1,
-#leaf-preview h6 {
-	color: black;
-}
-
-/************** Music panels **************/
-#tablage-preview {
-	background-image: url('../img/media/tablage-background.jpg');
-	background-color: red;
-	background-blend-mode: screen;
-}
-
-#tablage-preview h1,
-#tablage-preview h6 {
-	color: black;
-}
-
-#virtualtabla-preview {
-	background-image: url('../img/media/virtual-tabla-preview.png');
-	background-color: black;
-}
-
-#tablanotebook-preview {
-	background-image: url('../img/media/tablanotebook-preview.png');
-	background-color: white;
-}
-
-#tablanotebook-preview h1,
-#tablanotebook-preview h6 {
-	color: black;
-}
-
-/************** Writings panels **************/
-#businessownership-preview {
-	background-image: url('../img/publications/businessownership-preview.png');
-	background-color: white;
-}
-
-#businessownership-preview h1,
-#businessownership-preview h6 {
-	color: black;
-}
-
-#philosophy-game-preview {
-	background-color: #4a5568;
-	background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-}
-
-#philosophy-game-preview h1,
-#philosophy-game-preview h6 {
-	color: white;
-}
-
-#unexpected-adventures-preview {
-	background-color: #17a2b8;
-	background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-}
-
-#unexpected-adventures-preview h1,
-#unexpected-adventures-preview h6 {
-	color: white;
-}
-/************** Artwork Portfolio **************/
-#artportfolio-preview {
-	background-image:
-		linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.45) 100%),
-		url('../img/art-portfolio/banner.jpg');
-	background-color: black;
-	background-position: center;
-	background-size: cover;
+.institution-tile::before {
+	content: "";
+	position: absolute;
+	inset: 0;
 	background-repeat: no-repeat;
+	background-position: right 8% center;
+	background-size: auto 180%;
+	opacity: 0.10;
+	pointer-events: none;
 }
 
-#artportfolio-preview h1,
-#artportfolio-preview h6 {
-	color: white;
-	text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+.institution-tile > * {
+	position: relative;
+	z-index: 1;
+}
+
+.institution-tile .institution-name {
+	margin-bottom: 0.7em;
+}
+
+.institution-tile > ul {
+	margin: 0;
+	padding-left: 1.2em;
+}
+
+.institution-tile > ul > li {
+	margin: 0.35em 0;
+}
+
+.institution-tile--nasa::before {
+	background-image: url("../img/logos/nasa-meatball.svg");
+	background-position: right 6% center;
+	background-size: auto 200%;
+}
+
+.institution-tile--state::before {
+	background-image: url("../img/logos/us-state-dept.svg");
+	background-position: right 8% center;
+	background-size: auto 180%;
+}
+
+.institutions > li > ul {
+	list-style: disc;
+	padding-left: 1.4em;
+	margin: 0;
+}
+
+.institutions > li > ul > li {
+	margin: 0.2em 0;
+}
+
+/* Slim image tiles (Arts, Apps) */
+.tile-grid {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.tile {
+	display: block;
+	position: relative;
+	min-height: 78px;
+	padding: 14px 22px;
+	color: #fff;
+	text-decoration: none;
+	background-color: #111;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-radius: 3px;
+	overflow: hidden;
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tile::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.55) 60%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.tile-content {
+	position: relative;
+	z-index: 1;
+}
+
+.tile-title {
+	display: block;
+	font-size: 1.25em;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	line-height: 1.2;
+	color: #fff;
+	margin: 0;
+}
+
+.tile-desc {
+	display: block;
+	margin-top: 2px;
+	font-size: 0.95em;
+	font-weight: 400;
+	color: rgba(255, 255, 255, 0.85);
+	letter-spacing: 0.01em;
+}
+
+.tile:hover,
+.tile:focus {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	color: #fff;
+	text-decoration: none;
+}
+
+/* Per-tile background art (kept slim — image visible behind dark gradient) */
+.tile.tile-artportfolio { background-image: url("../img/art-portfolio/banner.jpg"); }
+.tile.tile-tzl8         { background-image: url("../img/media/tzl8-logo.png"); background-color: #000; background-size: contain; background-position: center left; }
+.tile.tile-tablage      { background-image: url("../img/media/tablage-background.jpg"); }
+.tile.tile-virtualtabla { background-image: url("../img/media/virtual-tabla-preview.png"); }
+.tile.tile-philosophy   { background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); }
+.tile.tile-adventures   { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); }
+
+/* Tiles whose backgrounds are pure gradients don't need the dark overlay */
+.tile.tile-philosophy::before,
+.tile.tile-adventures::before {
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+}
+
+/* Artwork Portfolio — preserved framed look */
+.artwork-intro {
+	margin-bottom: 2.5em;
 }
 
 .artwork-item {
-	margin-bottom: 4.5em;
+	margin: 3.5em 0;
 }
 
 .artwork-item h3 {
 	margin-top: 0;
-	margin-bottom: 0.5em;
+	margin-bottom: 0.3em;
+	font-size: 1.4em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .artwork-item > p {
-	margin-bottom: 1.6em;
+	margin-bottom: 1.4em;
 }
 
 .artwork-figure {
-	max-width: 720px;
+	max-width: 700px;
 	margin: 0 auto;
 }
 
 .artwork-figure img {
-	width: 100%;
 	display: block;
+	width: 100%;
 	box-sizing: border-box;
 	padding: 10px;
 	background: #f5f1e8;
-	border: 1px solid #3d4851;
-	border-radius: 4px;
-	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
 .artwork-figure .meta {
-	color: #888;
+	color: #666;
 	font-style: italic;
-	font-size: 0.9em;
-	margin: 0.8em 0 0;
+	font-size: 0.95em;
+	margin: 0.6em 0 0;
 	text-align: center;
+}
+
+.artwork-figure .credit {
+	display: block;
+	font-size: 0.85em;
+	color: #888;
+	margin-top: 0.3em;
+}
+
+/* Footnote / small print */
+.footnote,
+small {
+	font-size: 0.9em;
+	color: #666;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+	body {
+		font-size: 18px;
+		padding: 36px 18px 56px;
+	}
+
+	h1 {
+		font-size: 2.1em;
+	}
+
+	h2 {
+		font-size: 1.35em;
+	}
+
+	.contact-label {
+		display: block;
+		min-width: 0;
+	}
+
+	.tile {
+		min-height: 70px;
+		padding: 12px 18px;
+	}
+
+	.tile-title {
+		font-size: 1.1em;
+	}
 }
