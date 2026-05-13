@@ -67,7 +67,6 @@ body {
 }
 
 .brand:hover { background: rgba(255, 255, 255, 0.12); }
-.brand-back  { font-size: 1.1rem; font-weight: 700; opacity: 0.85; }
 .brand-name  { display: inline-flex; align-items: center; gap: 8px; }
 .brand-name::before { content: "🧮"; font-size: 1.15rem; }
 

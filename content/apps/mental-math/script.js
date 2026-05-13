@@ -43,7 +43,8 @@
             blurbAce: 'You crushed it. 🌟',
             blurbGreat: 'Great job.',
             blurbGood: 'Nice try — keep going.',
-            blurbKeep: 'Keep practicing.'
+            blurbKeep: 'Keep practicing.',
+            confirmExit: 'Exit the game and go back to the main menu?'
         },
         es: {
             appTitle: 'Cálculo Mental',
@@ -86,7 +87,8 @@
             blurbAce: '¡Increíble! 🌟',
             blurbGreat: '¡Muy bien!',
             blurbGood: 'Buen intento — sigue así.',
-            blurbKeep: 'Sigue practicando.'
+            blurbKeep: 'Sigue practicando.',
+            confirmExit: '¿Salir del juego y volver al menú principal?'
         }
     };
 
@@ -537,6 +539,18 @@
         $('#menuBtn').addEventListener('click', () => setScreen('setup'));
     }
 
+    function wireBrand() {
+        const brand = $('#brandLink');
+        if (!brand) return;
+        brand.addEventListener('click', (e) => {
+            if (document.body.classList.contains('screen-game')) {
+                if (!window.confirm(t('confirmExit'))) {
+                    e.preventDefault();
+                }
+            }
+        });
+    }
+
     /* ---------- Init ---------- */
 
     function init() {
@@ -547,6 +561,7 @@
         wireSetup();
         wireGame();
         wireScoreboard();
+        wireBrand();
         setScreen('setup');
     }
 
