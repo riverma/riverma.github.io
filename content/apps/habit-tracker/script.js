@@ -667,6 +667,54 @@ function renderStats() {
   }
 }
 
+/* ---------- Backup ---------- */
+function exportBackup() {
+  // Always serialize fresh from `state` (not whatever was last written) so
+  // any in-memory edits the user just made are included.
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `riverma-habits-${getToday()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // Defer revoke to give the browser a tick to start the download.
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function importBackup(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try { parsed = JSON.parse(reader.result); }
+    catch { alert("That file isn't valid JSON."); return; }
+    if (!parsed || parsed.version !== 1 ||
+        !Array.isArray(parsed.habits) ||
+        !parsed.days || typeof parsed.days !== 'object') {
+      alert("That doesn't look like a Habits backup file.");
+      return;
+    }
+    const curH = state.habits.length;
+    const curD = Object.keys(state.days).length;
+    const newH = parsed.habits.length;
+    const newD = Object.keys(parsed.days).length;
+    const msg =
+      'Replace your current data with this backup?\n\n' +
+      `Current:  ${curH} habit${curH===1?'':'s'}, ${curD} tracked day${curD===1?'':'s'}\n` +
+      `Imported: ${newH} habit${newH===1?'':'s'}, ${newD} tracked day${newD===1?'':'s'}\n\n` +
+      'This cannot be undone (unless you exported a backup first).';
+    if (!confirm(msg)) return;
+    state.habits = parsed.habits;
+    state.days = parsed.days;
+    saveState();
+    renderEdit();
+  };
+  reader.onerror = () => alert("Couldn't read that file.");
+  reader.readAsText(file);
+}
+
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -705,6 +753,17 @@ function wire() {
     // Focus the new name input.
     const inputs = $$('#editList .edit-name');
     if (inputs.length) inputs[inputs.length - 1].focus();
+  });
+
+  // Backup
+  $('#exportBtn').addEventListener('click', exportBackup);
+  const importInput = $('#importInput');
+  $('#importBtn').addEventListener('click', () => importInput.click());
+  importInput.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) importBackup(file);
+    // Reset so picking the same file again still fires `change`.
+    e.target.value = '';
   });
 
   // If the user keeps the app open across midnight, refresh viewedDate to today.

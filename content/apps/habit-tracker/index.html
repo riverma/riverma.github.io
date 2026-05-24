@@ -62,6 +62,16 @@
 
     <div id="editList" class="edit-list"></div>
 
+    <section class="edit-backup" aria-labelledby="backupHeading">
+        <h2 id="backupHeading">Backup</h2>
+        <p>Save your habits &amp; history to a file you can keep, or restore from one.</p>
+        <div class="data-actions">
+            <button type="button" id="exportBtn" class="ghost-btn">Export backup</button>
+            <input type="file" id="importInput" accept="application/json,.json" hidden>
+            <button type="button" id="importBtn" class="ghost-btn">Import backup</button>
+        </div>
+    </section>
+
     <div class="edit-footer">
         <button type="button" id="addHabitBtn" class="add-btn">+ Add habit</button>
     </div>
