@@ -1,0 +1,646 @@
+/* ================================================================
+ * Habits — handwritten habit checklist
+ * Self-contained. No CDN, no external assets, no JS libs.
+ * ================================================================ */
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('fonts/caveat-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Caveat';
+  src: url('fonts/caveat-latin-ext.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+                 U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+                 U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Patrick Hand';
+  src: url('fonts/patrick-hand-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Patrick Hand';
+  src: url('fonts/patrick-hand-latin-ext.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+                 U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+                 U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --paper:       #fbf7ec;
+  --paper-deep:  #f3eedf;
+  --ink:         #1a2240;
+  --ink-soft:    #34406b;
+  --ink-faint:   rgba(26, 34, 64, 0.55);
+  --rule:        rgba(74, 123, 167, 0.32);
+  --rule-soft:   rgba(74, 123, 167, 0.18);
+  --margin-red:  rgba(199, 86, 70, 0.45);
+  --pass-wash:   rgba(217, 162, 64, 0.10);
+  --pass-ink:    #c98c2a;
+  --muted:       #5e6072;          /* darker than initial #7a7b8c to clear WCAG AA on cream */
+
+  --font-script: 'Caveat', 'Bradley Hand', 'Segoe Script', 'Comic Sans MS', cursive;
+  --font-hand:   'Patrick Hand', 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive, sans-serif;
+
+  /* Notebook ruling pitch — also drives row height (rows span 2 lines). */
+  --rule-pitch: 32px;
+  --row-height: 64px;        /* = 2 × rule-pitch */
+  --margin-left: 44px;
+
+  --tap: 44px;               /* minimum tap-target size */
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper-deep);    /* desktop margin — see body shadow below */
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 18px;
+  line-height: 1.3;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: contain;
+}
+
+body {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--paper);
+  /* Soft cream sheet on top of slightly-darker page bg for desktop only. */
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--ink-soft);
+  outline-offset: 2px;
+  /* inherit so circular buttons (steppers) get a circular ring, not a square halo */
+  border-radius: inherit;
+}
+
+/* ---------- Screens ---------- */
+.screen { display: none; }
+.screen.is-active { display: block; }
+
+/* ---------- App header ---------- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.app-header .brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  font-family: var(--font-hand);
+  font-size: 28px;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: 1;
+}
+.brand-title {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1;
+  text-align: center;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+.header-actions {
+  display: flex;
+  gap: 2px;
+  min-width: calc(var(--tap) + 4px);
+  justify-content: flex-end;
+}
+.header-actions .icon-btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.header-actions .icon-btn svg { display: block; }
+
+/* ---------- Date bar ---------- */
+.date-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px 4px;
+}
+.date-display {
+  flex: 1;
+  text-align: center;
+  line-height: 1.1;
+}
+.date-main {
+  font-family: var(--font-hand);
+  font-size: 26px;
+  color: var(--ink);
+}
+.date-sub {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.today-btn {
+  margin-top: 4px;
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  min-height: 32px;
+  padding: 0 6px;
+}
+.day-arrow {
+  width: var(--tap);
+  height: var(--tap);
+  font-family: var(--font-hand);
+  font-size: 30px;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.day-arrow:disabled {
+  color: var(--ink-soft);
+  opacity: 0.28;
+  cursor: default;
+}
+
+/* ---------- Sheet (the paper area) ---------- */
+.sheet {
+  position: relative;
+  padding-left: var(--margin-left);
+  padding-right: 12px;
+  padding-bottom: 80px;
+  /* Faded red margin line + horizontal blue ruling. */
+  background-image:
+    /* Red vertical margin line at margin-left - 12px */
+    linear-gradient(
+      to right,
+      transparent calc(var(--margin-left) - 12px),
+      var(--margin-red) calc(var(--margin-left) - 12px),
+      var(--margin-red) calc(var(--margin-left) - 11px),
+      transparent calc(var(--margin-left) - 11px)
+    ),
+    /* Repeating horizontal rule */
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--rule-pitch) - 1px),
+      var(--rule) calc(var(--rule-pitch) - 1px) var(--rule-pitch)
+    );
+  background-position: 0 0, 0 0;
+  background-repeat: no-repeat, repeat;
+}
+
+.column-head {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  align-items: end;
+  height: var(--row-height);
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 19px;
+  padding-bottom: 4px;
+  position: relative;
+}
+.column-head::after {
+  /* Thin vertical ink rule separating the columns, drawn the full sheet height.
+     Kept soft so it doesn't compete with the red margin line. */
+  content: '';
+  position: absolute;
+  left: calc(55% - 1px);
+  top: 0;
+  bottom: -1000px;          /* extends past column head into rows */
+  width: 1px;
+  background: var(--ink-faint);
+  opacity: 0.25;
+  pointer-events: none;
+}
+.col-name, .col-count {
+  font-weight: 400;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-soft);
+}
+.col-count { padding-left: 12px; }
+
+/* ---------- Habit rows ---------- */
+.habit-list { position: relative; }
+
+.row {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  align-items: center;
+  min-height: var(--row-height);
+  position: relative;
+  transition: background-color 180ms ease;
+}
+.row.row-pass {
+  background-color: var(--pass-wash);
+}
+/* When a row passes, reserve space on the right of the count cell for the
+   big check so it doesn't sit on top of the tally / num. */
+.row.row-pass .cell-count { padding-right: 58px; }
+
+.cell-name {
+  padding: 6px 10px 6px 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.cell-name .name {
+  font-family: var(--font-hand);
+  font-size: 22px;
+  line-height: 1.15;
+}
+.cell-name .note {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.cell-count {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: var(--row-height);
+  padding: 8px 10px 8px 14px;
+  color: var(--ink);
+  text-align: left;
+  width: 100%;
+  font: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.cell-count:active { background-color: rgba(26, 34, 64, 0.05); }
+.cell-count { touch-action: manipulation; }     /* prevent double-tap zoom delay on the primary tap target */
+.cell-count {
+  -webkit-user-select: none;
+  user-select: none;                            /* long-press shouldn't trigger text selection */
+}
+
+.tally-wrap {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  max-width: 100%;
+}
+.tally {
+  height: 28px;
+  width: auto;
+  max-width: 100%;
+  color: var(--ink);
+}
+.num-line {
+  font-family: var(--font-hand);
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1;
+}
+.num-line .num { color: var(--ink); font-size: 16px; }
+.num-line .slash, .num-line .min { color: var(--muted); }
+
+/* Big pass checkmark — anchored to the right edge of the entire row so it
+   sits beyond the count cell content and never collides with the undo control. */
+.check-wrap {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--ink);
+  z-index: 1;
+}
+.passcheck {
+  width: 46px;
+  height: 38px;
+  display: block;
+}
+.passcheck path {
+  stroke: var(--ink);              /* explicit (not currentColor) for reliable headless rendering */
+}
+/* No entrance animation on the check — keeps headless renders and reduced-
+   motion users in lockstep with everyone else; the row-pass background
+   transition is the only subtle motion. */
+
+/* Force header icon stroke (explicit > currentColor for headless reliability). */
+.app-header .icon-btn svg line,
+.app-header .icon-btn svg path {
+  stroke: var(--ink);
+}
+@keyframes draw {
+  from { stroke-dashoffset: 120; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* (Decrement is a long-press on the count cell — no visible button. See
+   script.js for the pointerdown→setTimeout→suppressNextClick handler.) */
+
+
+/* Quiet hint at the bottom of the sheet — explains the long-press gesture
+   without claiming visual weight. */
+.sheet-hint {
+  margin: 24px 0 0;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-family: var(--font-hand);
+  font-size: 20px;
+}
+.empty-state p { margin: 6px 0; }
+.inline-icon {
+  display: inline-block;
+  padding: 0 6px;
+  border: 1px solid var(--ink-faint);
+  border-radius: 6px;
+  margin: 0 2px;
+  font-size: 18px;
+}
+
+/* ================================================================
+ * Edit screen
+ * ================================================================ */
+.edit-list { padding: 8px 14px 96px; }
+
+.edit-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  gap: 8px;
+  align-items: start;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.reorder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.reorder .icon-btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.reorder .icon-btn:disabled { color: var(--ink-faint); opacity: 0.35; }
+
+.fields { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.edit-name, .edit-note {
+  font-family: var(--font-hand);
+  font-size: 20px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding: 4px 0;
+  min-height: var(--tap);
+  outline: none;
+  width: 100%;
+}
+.edit-name:focus, .edit-note:focus { border-bottom-color: var(--ink-soft); }
+.edit-note { font-size: 16px; color: var(--ink-soft); font-style: italic; }
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-hand);
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+.stepper-label { min-width: 38px; }
+.stepper .icon-btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--ink);
+  border: 1px solid var(--ink-faint);
+  border-radius: 50%;
+}
+.stepper-val {
+  min-width: 28px;
+  text-align: center;
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.del-btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  font-size: 18px;
+}
+.del-btn:active { color: #a13a2c; }
+
+.edit-footer {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px env(safe-area-inset-bottom, 12px);
+  background: linear-gradient(to top, var(--paper) 70%, rgba(251,247,236,0));
+  pointer-events: none;
+}
+.add-btn {
+  pointer-events: auto;
+  font-family: var(--font-hand);
+  font-size: 20px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink-faint);
+  border-radius: 999px;
+  padding: 10px 22px;
+  min-height: var(--tap);
+}
+.add-btn:active { background: var(--paper-deep); }
+
+/* ================================================================
+ * Stats screen
+ * ================================================================ */
+.stats-body { padding: 14px; }
+
+.stats-overall {
+  text-align: center;
+  padding: 18px 8px 14px;
+  border-bottom: 1px dashed var(--rule);
+  margin-bottom: 14px;
+}
+.overall-num {
+  font-family: var(--font-script);
+  font-size: 64px;
+  line-height: 1;
+  color: var(--ink);
+}
+.overall-lbl {
+  font-family: var(--font-hand);
+  font-size: 16px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+.overall-sub {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.stat-card {
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.stat-card:last-child { border-bottom: 0; }
+.stat-head { margin-bottom: 8px; }
+.stat-name {
+  font-family: var(--font-hand);
+  font-size: 22px;
+  color: var(--ink);
+}
+.stat-note {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px 12px;
+  margin: 8px 0 12px;
+}
+.stat-cell { text-align: center; padding: 6px 2px; }
+.stat-big {
+  font-family: var(--font-script);
+  font-size: 30px;
+  line-height: 1;
+  color: var(--ink);
+}
+.stat-lbl {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  text-transform: lowercase;
+  letter-spacing: 0.3px;
+}
+
+.heat-wrap { padding: 4px 0 2px; }
+.heat-lbl {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.heat-host { overflow-x: auto; }
+.heatmap { display: block; }
+.heatmap .cell-inactive { fill: var(--paper-deep); stroke: rgba(26,34,64,0.10); stroke-width: 1; }
+.heatmap .cell-future   { fill: var(--paper); stroke: rgba(26,34,64,0.06); stroke-width: 1; }
+.heatmap .cell-fail     { fill: rgba(26, 34, 64, 0.18); }
+.heatmap .cell-pass     { fill: var(--ink); }
+
+.stats-footnote {
+  margin-top: 18px;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--muted);
+}
+.muted { color: var(--muted); }
+
+/* ================================================================
+ * Small-phone tweaks
+ * ================================================================ */
+@media (max-width: 360px) {
+  :root {
+    --margin-left: 36px;
+  }
+  body { font-size: 17px; }
+  .brand-title { font-size: 32px; }
+  .date-main { font-size: 24px; }
+  .cell-name .name { font-size: 20px; }
+  .tally { height: 24px; }
+  /* Smaller check + less padding-right so tally + n/min fit on narrow phones. */
+  .passcheck { width: 36px; height: 30px; }
+  .row.row-pass .cell-count { padding-right: 44px; }
+}
+
+/* ================================================================
+ * Accessibility
+ * ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* Blanket override so any future animation we add inherits the policy. */
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

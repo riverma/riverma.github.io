@@ -458,11 +458,13 @@ footer p {
 .tile.tile-philosophy   { background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); }
 .tile.tile-adventures   { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); }
 .tile.tile-mentalmath   { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+.tile.tile-habittracker { background: linear-gradient(135deg, #1a2240 0%, #34406b 100%); }
 
 /* Tiles whose backgrounds are pure gradients don't need the dark overlay */
 .tile.tile-philosophy::before,
 .tile.tile-adventures::before,
-.tile.tile-mentalmath::before {
+.tile.tile-mentalmath::before,
+.tile.tile-habittracker::before {
 	background: linear-gradient(to right, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
 }
 
