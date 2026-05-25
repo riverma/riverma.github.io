@@ -504,9 +504,19 @@ button:focus-visible,
 /* Quiet "Backup" section at the bottom of the edit screen — sits inside the
    scrollable content so it never competes with the floating add button. */
 .edit-backup {
-  padding: 24px 14px 110px;          /* trailing room for the floating add-btn */
+  padding: 24px 14px 16px;
   border-top: 1px dashed var(--rule);
   margin-top: 18px;
+}
+
+.app-version {
+  margin: 8px 0 0;
+  padding-bottom: 110px;             /* trailing room for the floating add-btn */
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.4px;
 }
 .edit-backup h2 {
   margin: 0 0 6px;
