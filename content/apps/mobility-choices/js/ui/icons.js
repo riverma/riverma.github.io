@@ -75,6 +75,8 @@ export const ICONS = {
     'M12 20s-7.5-4.7-7.5-10.2A4.3 4.3 0 0 1 12 6a4.3 4.3 0 0 1 7.5 3.8C19.5 15.3 12 20 12 20Z'
   ),
   chevronLeft: () => svg('m15 6-6 6 6 6'),
+  chevronDown: () => svg('m6 9 6 6 6-6'),
+  chevronUp:   () => svg('m6 15 6-6 6 6'),
   pin: () => svg('M12 21s7-7.5 7-12.5A7 7 0 1 0 5 8.5C5 13.5 12 21 12 21Z M12 11.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z'),
   search: () => svgMulti([
     { tag: 'circle', cx: '11', cy: '11', r: '6.5' },

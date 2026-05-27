@@ -11,6 +11,11 @@ export const KG_CO2_PER_GAL_GASOLINE = 8.887;
   // EPA "Greenhouse Gases Equivalencies Calculator — Calculations and References", 2023.
   // https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator-calculations-and-references
 
+// --- Social Cost of Carbon ($/kg CO2) used to monetise carbon emissions for the overall score.
+//     EPA 2023 SC-CO2 final value: ~$190/tonne at 2% discount rate (2020 USD). $0.19/kg.
+//     https://www.epa.gov/environmental-economics/social-cost-greenhouse-gases
+export const SOCIAL_COST_OF_CARBON_USD_PER_KG = 0.190;
+
 export const CO2E_G_PER_KCAL_FOOD = 2.2;
   // Poore & Nemecek, "Reducing food's environmental impacts through producers and consumers",
   // Science 2018 — global average diet, lifecycle CO2-eq per dietary kcal.

@@ -1,5 +1,7 @@
-// Unit conversion + display formatters. Internal math stays canonical (meters, seconds, kg, USD);
-// only the UI converts to imperial when settings.units === 'imperial'.
+// Unit conversion + display formatters.
+// Internal math + storage stays canonical (kg for weight, mph for speeds, mpg for fuel-economy,
+// $/gal for gas price). The settings form converts display values at the input/output boundary
+// based on the user's chosen measurement system.
 
 import { M_PER_MI, KG_PER_LB } from '../data/constants.js';
 
@@ -7,6 +9,19 @@ export const metersToMiles = (m) => m / M_PER_MI;
 export const milesToMeters = (mi) => mi * M_PER_MI;
 export const kgToLb = (kg) => kg / KG_PER_LB;
 export const lbToKg = (lb) => lb * KG_PER_LB;
+
+// Speed
+export const mphToKmh = (mph) => mph * 1.609344;
+export const kmhToMph = (kmh) => kmh / 1.609344;
+
+// Fuel economy — note: L/100 km is INVERSE of mpg, so the formula is non-linear
+export const mpgToL100km = (mpg) => (mpg > 0 ? 235.215 / mpg : 0);
+export const l100kmToMpg = (l) => (l > 0 ? 235.215 / l : 0);
+
+// Volume
+export const LITERS_PER_GAL = 3.78541;
+export const usdGalToUsdL = ($gal) => $gal / LITERS_PER_GAL;
+export const usdLToUsdGal = ($L)   => $L  * LITERS_PER_GAL;
 
 export function formatDistance(meters, units = 'imperial') {
   if (units === 'metric') {

@@ -2,7 +2,7 @@
 // No math, no HTTP here — those live in engine/* and routing/* respectively.
 
 import { getState, setState, subscribe, actions } from './state.js';
-import { computeAllModes } from './engine/index.js';
+import { computeAllModes, sortProfiles } from './engine/index.js';
 import { initSearchInput } from './ui/search.js';
 import { initMap } from './ui/map.js';
 import { initResults } from './ui/results.js';
@@ -58,6 +58,15 @@ const resultsApi = initResults(document.getElementById('results'), {
     actions.setSelectedMode(profile);
     // Map sync happens in the state subscriber below — one place, never out-of-sync with state.
   },
+  onSortChange: (key) => {
+    actions.setSortBy(key);
+    // After sorting changes, the top-ranked card becomes the new "best" — follow it on the map.
+    if (currentResults) {
+      const sorted = sortProfiles(currentResults, key);
+      if (sorted[0]) actions.setSelectedMode(sorted[0]);
+    }
+  },
+  onToggleExpand: (profile) => actions.toggleCardExpand(profile),
 });
 
 initAboutScreen(document.getElementById('aboutScreen'), { onClose: () => showScreen('main') });
@@ -82,9 +91,9 @@ async function runCompare() {
   try {
     const results = await computeAllModes(s.start, s.end, settings, { signal: activeAbort.signal });
     currentResults = results;
-    // Pick the first non-error mode as the default selected one (prefer car if it succeeded).
-    const order = ['car', 'bicycle', 'ebike', 'foot'];
-    const firstOk = order.find(p => results[p] && !results[p].error && !results[p].skipped) || 'car';
+    // Default selection: the top-sorted mode (best overall score).
+    const sorted = sortProfiles(results, getState().sortBy || 'overall');
+    const firstOk = sorted[0] || 'car';
     setState({ status: 'results', results, selectedMode: firstOk });
     mapApi.setMarkers(s.start, s.end);
     mapApi.setRoutes(results);
@@ -105,6 +114,8 @@ subscribe((s) => {
     units: settings.units,
     status: s.status,
     errorBanner: s.errorBanner,
+    sortBy: s.sortBy,
+    expandedCards: s.expandedCards,
   });
   // Sync map highlight to state.selectedMode whenever it changes.
   if (s.status === 'results' && s.selectedMode !== lastRenderedSelectedMode && currentResults) {
