@@ -106,6 +106,15 @@
 }
 
 * { box-sizing: border-box; }
+
+/* Respect user preference for reduced motion AND let screenshot tools opt out
+   of animations entirely via <html data-nofx>. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+html[data-nofx] *, html[data-nofx] *::before, html[data-nofx] *::after {
+  animation: none !important; transition: none !important;
+}
 html, body { margin: 0; padding: 0; height: 100%; }
 body {
   /* Prefer the platform's rounded variant (warmer, more friendly), fall through to standard SF / system. */
@@ -462,6 +471,30 @@ a:hover { text-decoration: underline; }
   color: var(--mc-label-2);
 }
 .mc-detail-text { margin: 0 0 6px; font-size: var(--mc-fz-foot); color: var(--mc-label-2); }
+
+/* Score breakdown — clear line-by-line explanation of the overall number. */
+.mc-score-breakdown { margin: 4px 0 12px; }
+.mc-score-lines {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 12px; background: var(--mc-fill-2); border-radius: 10px;
+  margin-top: 6px;
+}
+.mc-score-line {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 4px 0;
+  font-variant-numeric: tabular-nums;
+}
+.mc-score-line-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.mc-score-line-label { font-size: var(--mc-fz-foot); font-weight: 600; color: var(--mc-label); }
+.mc-score-line-hint  { font-size: var(--mc-fz-cap); color: var(--mc-label-2); }
+.mc-score-line-value { font-size: var(--mc-fz-body); font-weight: 600; white-space: nowrap; }
+.mc-score-line--total {
+  border-top: 0.5px solid var(--mc-separator);
+  padding-top: 8px; margin-top: 4px;
+}
+.mc-score-line--total .mc-score-line-label { font-size: var(--mc-fz-body); }
+.mc-score-line--total .mc-score-line-value { font-size: var(--mc-fz-h2); font-weight: 700; }
+.mc-score-note { font-size: var(--mc-fz-cap); color: var(--mc-label-3); margin-top: 8px; }
 .mc-breakdown {
   margin: 0; padding: 0 0 6px 18px;
   list-style: disc; font-size: var(--mc-fz-foot); color: var(--mc-label-2);

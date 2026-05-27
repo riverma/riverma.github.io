@@ -26,18 +26,35 @@ export const US_AVG_GAS_USD_GAL    = 3.50;   // EIA U.S. retail gasoline rolling
 export const US_AVG_ELEC_USD_KWH   = 0.18;   // EIA residential avg (2025-26)
 export const US_AVG_GRID_KG_CO2_KWH = 0.371; // EPA eGRID 2022 national, used when no state selected
 
-// --- HEAT (simplified per-trip share of WHO HEAT methodology) ---
+// --- Per-trip health benefit ---
+//
+// We deliberately DO NOT use the WHO HEAT methodology directly for the per-trip number.
+// HEAT estimates population-level annual mortality reduction from sustained active travel;
+// extrapolating it to a single trip produces eye-popping but misleading figures (e.g. $100+
+// for one walk). For a single-trip marginal value we use a much more conservative per-kcal
+// estimate grounded in dose-response cohort studies (Wen et al. Lancet 2011; Arem et al. JAMA
+// Intern Med 2015), conservatively scaled so a one-off trip shows a small but real
+// contribution to mortality-risk reduction. The annualised HEAT figure is still surfaced
+// in the About page so users can see what regular active travel is worth over a year.
+export const HEALTH_USD_PER_KCAL = 0.02;
+
+// --- Value of time ---
+// US DOT 2016 Revised Departmental Guidance values personal local travel time at ~50% of
+// the median hourly wage; $15/hour is a defensible default for general personal travel.
+// Configurable per user in settings.
+// https://www.transportation.gov/office-policy/transportation-policy/revised-departmental-guidance-on-valuation-of-travel-time-in
+export const VALUE_OF_TIME_USD_PER_HR_DEFAULT = 15.00;
+
+// --- HEAT constants (retained for the About page's annualised reference number) ---
 export const VSL_USD = 11_400_000;
   // US DOT 2024 Value of Statistical Life guidance.
   // https://www.transportation.gov/office-policy/transportation-policy/revised-departmental-guidance-on-valuation-of-a-statistical-life-in-economic-analysis
-export const HEAT_RR_CYCLING            = 0.90;  // Kelly 2014 meta-analysis: ~10% all-cause mortality reduction at reference dose
-export const HEAT_RR_WALKING            = 0.89;  // Kelly 2014: ~11% reduction at reference dose
-export const HEAT_CYCLING_REF_MIN_WK    = 100;   // WHO HEAT reference dose
-export const HEAT_WALKING_REF_MIN_WK    = 168;   // WHO HEAT reference dose
-export const HEAT_CAP_MIN_WK            = 450;   // WHO HEAT cap (no further benefit above this)
+export const HEAT_RR_CYCLING            = 0.90;
+export const HEAT_RR_WALKING            = 0.89;
+export const HEAT_CYCLING_REF_MIN_WK    = 100;
+export const HEAT_WALKING_REF_MIN_WK    = 168;
+export const HEAT_CAP_MIN_WK            = 450;
 export const HEAT_BACKGROUND_MORTALITY_US = 0.0084;
-  // CDC NVSR 2023 crude all-cause death rate, ~8.4 per 1,000 population.
-  // https://www.cdc.gov/nchs/products/nvsr.htm
 
 // --- MET (Metabolic Equivalent of Task) values ---
 // Ainsworth et al., "2011 Compendium of Physical Activities".

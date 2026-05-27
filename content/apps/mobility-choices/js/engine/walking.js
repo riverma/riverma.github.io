@@ -2,7 +2,7 @@
 
 import { MET_WALKING_MODERATE, CO2E_G_PER_KCAL_FOOD } from '../data/constants.js';
 import { metersToMiles } from '../util/units.js';
-import { heatBenefit } from './heat.js';
+import { perTripHealthBenefit } from './heat.js';
 import { CAVEATS } from '../data/caveats.js';
 
 /**
@@ -17,7 +17,7 @@ export function compute(route, settings) {
 
   const calories = MET_WALKING_MODERATE * (settings.weightKg || 75) * duration_hr;
   const food_co2_kg = (calories * CO2E_G_PER_KCAL_FOOD) / 1000;
-  const health_usd = heatBenefit('walking', duration_min, settings.tripsPerYear || 100);
+  const health_usd = perTripHealthBenefit(calories);
 
   const caveats = [...(route.caveats || []), CAVEATS.carbonFromFood, CAVEATS.healthEstimate];
   if (duration_hr > 3) caveats.push(CAVEATS.walkingLongRoute);

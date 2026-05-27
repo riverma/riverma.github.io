@@ -5,7 +5,7 @@ import {
   BIKE_MAINT_USD_PER_MI,
 } from '../data/constants.js';
 import { metersToMiles } from '../util/units.js';
-import { heatBenefit } from './heat.js';
+import { perTripHealthBenefit } from './heat.js';
 import { CAVEATS } from '../data/caveats.js';
 
 /**
@@ -23,7 +23,7 @@ export function compute(route, settings) {
   const calories = MET_CYCLING_LEISURE * (settings.weightKg || 75) * duration_hr;
   const food_co2_kg = (calories * CO2E_G_PER_KCAL_FOOD) / 1000;
 
-  const health_usd = heatBenefit('cycling', duration_min, settings.tripsPerYear || 100);
+  const health_usd = perTripHealthBenefit(calories);
 
   return {
     profile: 'bicycle',

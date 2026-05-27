@@ -1,7 +1,10 @@
 // localStorage-backed settings with a schema version so future migrations don't lose data.
 // Schema-version migration chain is empty at v1; add migrate_v1_to_v2 etc. as needed.
 
-import { US_AVG_GAS_USD_GAL, US_AVG_ELEC_USD_KWH, DEFAULT_TRANSIT_FARE_USD } from './data/constants.js';
+import {
+  US_AVG_GAS_USD_GAL, US_AVG_ELEC_USD_KWH, DEFAULT_TRANSIT_FARE_USD,
+  VALUE_OF_TIME_USD_PER_HR_DEFAULT,
+} from './data/constants.js';
 
 const STORAGE_KEY = 'riverma.mobility-choices.v1';
 export const SCHEMA_VERSION = 1;
@@ -19,7 +22,8 @@ export const DEFAULT_SETTINGS = Object.freeze({
   weightKg: 75,
   walkingSpeedMph: 3.0,                    // sanity-check display only
   cyclingSpeedMph: 12,                     // sanity-check display only
-  tripsPerYear: 100,
+  tripsPerYear: 100,                       // retained for About-page HEAT annualised example
+  valueOfTimeUsdPerHr: VALUE_OF_TIME_USD_PER_HR_DEFAULT,
   graphhopperKey: '',
   transit: { defaultFareUsd: DEFAULT_TRANSIT_FARE_USD, otpEndpoint: null },  // RESERVED
 });

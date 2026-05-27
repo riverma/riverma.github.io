@@ -3,11 +3,11 @@
 
 import {
   MET_EBIKE, CO2E_G_PER_KCAL_FOOD, US_AVG_GRID_KG_CO2_KWH,
-  EBIKE_MAINT_USD_PER_MI, EBIKE_WH_PER_MI, EBIKE_HEAT_DISCOUNT,
+  EBIKE_MAINT_USD_PER_MI, EBIKE_WH_PER_MI,
 } from '../data/constants.js';
 import { EGRID_KG_CO2_PER_KWH } from '../data/egrid.js';
 import { metersToMiles } from '../util/units.js';
-import { heatBenefit } from './heat.js';
+import { perTripHealthBenefit } from './heat.js';
 import { CAVEATS } from '../data/caveats.js';
 
 /**
@@ -36,7 +36,9 @@ export function compute(route, settings) {
   const food_co2_kg = (calories * CO2E_G_PER_KCAL_FOOD) / 1000;
   const total_co2 = grid_co2_kg + food_co2_kg;
 
-  const health_usd = heatBenefit('cycling', duration_min * EBIKE_HEAT_DISCOUNT, settings.tripsPerYear || 100);
+  // E-bikers burn fewer calories per minute than analog cyclists, so perTripHealthBenefit(calories)
+  // naturally captures the reduced contribution without an additional discount factor.
+  const health_usd = perTripHealthBenefit(calories);
 
   return {
     profile: 'ebike',

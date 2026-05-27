@@ -70,10 +70,10 @@ export function initSettingsScreen(rootEl, { onClose }) {
         ({ value: v, label: `${l} — ${formatEbikeEfficiency(EBIKE_WH_PER_MI[v])}` }))),
     ]));
 
-    // You — weight + activity
+    // You — weight + value of time
     form.appendChild(section('You', [
       weightField(),
-      numberField('Trips per year (for health benefit estimate)', 'tripsPerYear', 1, 1, 1000),
+      numberField('Value of your time ($ / hour)', 'valueOfTimeUsdPerHr', 0.5, 0, 200),
     ]));
 
     // GraphHopper

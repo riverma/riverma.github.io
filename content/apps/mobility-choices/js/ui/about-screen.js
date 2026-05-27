@@ -52,17 +52,34 @@ function body() {
       Ainsworth et al. 2011 Compendium of Physical Activities.</li>
     </ul>
 
-    <h2>About the health-benefit number</h2>
-    <p>This is the slipperiest number in the app. It is a simplified per-trip share of the
-    <a href="https://www.heatwalkingcycling.org" target="_blank" rel="noopener">WHO HEAT</a>
-    methodology, which estimates monetised mortality-risk reduction from regular active travel.</p>
-    <p>HEAT is designed for population-level intervention assessment; a single trip's marginal value
-    is by definition small. To make the number meaningful for one trip, we project this trip's
-    minutes out to a year using your "trips per year" setting, apply HEAT's scaled mortality-risk
-    reduction (capped at 450 minutes/week), multiply by US background mortality and the US DOT
-    Value of Statistical Life (~$11.4M, 2024), and divide back by trips/year.</p>
-    <p>Read it as: <em>if this trip is part of a regular pattern, what is its share worth?</em>
-    A one-off trip gets a near-zero share; a daily commute gets a more substantial one.</p>
+    <h2>How the overall score works</h2>
+    <p>Each mode gets one combined score in dollars, with higher meaning better.
+    Money, time, and carbon are <em>costs</em> that reduce the score; only the health
+    benefit adds to it. The formula:</p>
+    <p><code>score = health_benefit − money_cost − time_cost − carbon_cost</code></p>
+    <ul>
+      <li><strong>Money cost:</strong> what you actually pay for the trip (fuel + wear, electricity, maintenance, etc.).</li>
+      <li><strong>Time cost:</strong> the trip's duration multiplied by your Value of Time
+      (default $15/hr from US DOT 2016 personal-travel guidance; adjustable in Settings).
+      This is what makes a 4-hour walk lose out to a 17-minute drive for ordinary urban trips.</li>
+      <li><strong>Carbon cost:</strong> kg CO₂ multiplied by the EPA 2023 Social Cost of Carbon
+      (~$0.19/kg, 2% discount rate). Internalises the climate damage of emissions.</li>
+      <li><strong>Health benefit:</strong> calories burned multiplied by a conservative per-kcal
+      mortality-risk value ($0.02/kcal). See "About the per-trip health value" below.</li>
+    </ul>
+
+    <h2>About the per-trip health value</h2>
+    <p>We deliberately use a conservative per-kilocalorie estimate ($0.02/kcal) rather than
+    the WHO HEAT methodology directly. HEAT projects sustained active travel into an
+    <em>annual</em> mortality reduction; mechanically extrapolating it to a single trip
+    produces eye-popping figures ($100+ for one walk) that overstate what one trip really
+    achieves. The per-kcal value is grounded in dose-response cohort studies (Wen et al.
+    Lancet 2011; Arem et al. JAMA Intern Med 2015), conservatively scaled so a one-off trip
+    shows a small but real contribution to mortality-risk reduction.</p>
+    <p>For reference: if you were to take this trip regularly, the WHO HEAT annualised
+    benefit would be considerably larger — and that is the appropriate framing for
+    population-level policy interventions. For a one-time individual trip decision,
+    the per-kcal value is more honest.</p>
 
     <h2>What's deliberately missing in v1</h2>
     <ul>

@@ -17,6 +17,12 @@ for (const host of document.querySelectorAll('[data-icon]')) {
   host.appendChild(icon(host.dataset.icon));
 }
 
+// Allow URL ?nofx=1 to disable CSS animations — used by headless screenshots so
+// staggered card-in animations don't trip up the capture.
+if (new URLSearchParams(location.search).get('nofx') === '1') {
+  document.documentElement.setAttribute('data-nofx', '');
+}
+
 let settings = loadSettings();
 let currentResults = null;        // last computed results — kept for map re-render on mode change
 let activeAbort = null;           // for in-flight Compare cancellation
@@ -142,11 +148,22 @@ window.addEventListener('resize', () => mapApi.invalidate());
 
 // --- Demo trigger for screenshots / shareable preview URLs ---
 // ?demo=1 → auto-fires the Pasadena→DTLA comparison so the loaded state is reproducible.
-if (new URLSearchParams(location.search).get('demo') === '1') {
+// ?expand=<profile> → also auto-expand that card's detail panel.
+const params = new URLSearchParams(location.search);
+if (params.get('demo') === '1') {
   actions.setStart({ lat: 34.1478, lon: -118.1445, label: 'Pasadena, CA' });
   actions.setEnd  ({ lat: 34.0522, lon: -118.2437, label: 'Downtown Los Angeles, CA' });
   document.querySelector('input[aria-label="Start"]').value = 'Pasadena, CA';
   document.querySelector('input[aria-label="End"]').value   = 'Downtown Los Angeles, CA';
   compareBtn.disabled = false;
   setTimeout(() => compareBtn.click(), 50);
+  const expandProfile = params.get('expand');
+  if (expandProfile) {
+    const unsub = subscribe((s) => {
+      if (s.status === 'results' && !s.expandedCards.has(expandProfile)) {
+        actions.toggleCardExpand(expandProfile);
+        setTimeout(unsub, 0);
+      }
+    });
+  }
 }

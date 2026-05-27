@@ -103,11 +103,11 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     if (isBest) head.appendChild(el('span', { class: 'mc-best-badge' }, '★ Best'));
     card.appendChild(head);
 
-    // Overall score (prominent)
+    // Overall score (prominent) — higher = better. Positive = net benefit (green).
     const total = r.score.total_usd;
-    const totalKlass = total > 0.01 ? 'mc-cost' : (total < -0.01 ? 'mc-benefit' : 'mc-neutral');
-    const totalLabel = total > 0.01 ? 'Net cost' : (total < -0.01 ? 'Net benefit' : 'Break-even');
-    const totalDisplay = formatSignedUsd(total);
+    const totalKlass = total > 0.01 ? 'mc-benefit' : (total < -0.01 ? 'mc-cost' : 'mc-neutral');
+    const totalLabel = total > 0.01 ? 'Net benefit' : (total < -0.01 ? 'Net cost' : 'Break-even');
+    const totalDisplay = total > 0 ? `+${formatUsd(total)}` : (total < 0 ? `−${formatUsd(-total)}` : '$0.00');
     const scoreRow = el('div', { class: 'mc-score-row' },
       el('span', { class: 'mc-score-label' }, totalLabel),
       el('span', { class: `mc-score-value ${totalKlass}` }, totalDisplay),
@@ -151,6 +151,9 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
   function renderDetail(r, units) {
     const wrap = el('div', { class: 'mc-card-detail' });
 
+    // Score breakdown — show every component that goes into the overall number
+    wrap.appendChild(renderScoreBreakdown(r));
+
     // Cost breakdown
     if (Object.keys(r.cost.breakdown).length) {
       wrap.appendChild(detailHeading('Cost breakdown'));
@@ -191,6 +194,55 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
 
   function detailHeading(text) {
     return el('h4', { class: 'mc-detail-h' }, text);
+  }
+
+  function renderScoreBreakdown(r) {
+    const s = r.score;
+    const wrap = el('div', { class: 'mc-score-breakdown' });
+    wrap.appendChild(detailHeading('How this score works'));
+    wrap.appendChild(el('p', { class: 'mc-detail-text' },
+      'Higher score is better. Money, time, and carbon all reduce it; only health benefit adds to it.'));
+
+    const lines = el('div', { class: 'mc-score-lines' });
+    lines.appendChild(scoreLine('Health benefit', s.health_usd, 'add',
+      r.health.calories_burned ? `${Math.round(r.health.calories_burned)} kcal × $0.02/kcal` : 'no active travel'));
+    lines.appendChild(scoreLine('Money cost', s.money_usd, 'sub',
+      `paid for ${r.label.toLowerCase()}`));
+    lines.appendChild(scoreLine('Time cost', s.time_usd, 'sub',
+      `${formatDuration(r.duration_min * 60)} × $${s.vot_usd_per_hr.toFixed(2)}/hr`));
+    lines.appendChild(scoreLine('Carbon cost', s.carbon_usd, 'sub',
+      `${formatKg(r.co2.total_kg)} × $0.19/kg (EPA SC-CO₂)`));
+
+    // Final
+    const total = s.total_usd;
+    const klass = total > 0.01 ? 'mc-benefit' : (total < -0.01 ? 'mc-cost' : 'mc-neutral');
+    const sign  = total > 0 ? '+' : (total < 0 ? '−' : '');
+    const display = `${sign}${formatUsd(Math.abs(total))}`;
+    lines.appendChild(el('div', { class: 'mc-score-line mc-score-line--total' },
+      el('span', { class: 'mc-score-line-label' }, 'Overall score'),
+      el('span', { class: `mc-score-line-value ${klass}` }, display),
+    ));
+
+    wrap.appendChild(lines);
+    wrap.appendChild(el('p', { class: 'mc-detail-text mc-score-note' },
+      'Tune your value of time, body weight, MPG, and gas price in Settings — they all feed this calculation.'));
+    return wrap;
+  }
+
+  function scoreLine(label, valueUsd, op, hint) {
+    // op: 'add' (counted positive — health) or 'sub' (counted negative — costs).
+    // We always display the absolute $, prefixed with + or − to make the sign visible.
+    const sign = op === 'add' ? '+' : '−';
+    const klass = (op === 'add' && valueUsd > 0.005) ? 'mc-benefit'
+                : (op === 'sub' && valueUsd > 0.005) ? 'mc-cost' : 'mc-neutral';
+    const v = Math.abs(valueUsd) < 0.005 ? '$0.00' : `${sign}${formatUsd(Math.abs(valueUsd))}`;
+    return el('div', { class: 'mc-score-line' },
+      el('div', { class: 'mc-score-line-text' },
+        el('span', { class: 'mc-score-line-label' }, label),
+        el('span', { class: 'mc-score-line-hint' }, hint),
+      ),
+      el('span', { class: `mc-score-line-value ${klass}` }, v),
+    );
   }
 
   function metricChip(label, valueText, klass) {
