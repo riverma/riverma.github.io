@@ -2,52 +2,75 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="theme-color" content="#1a120b">
 	<title>Rishi Verma &mdash; Virtual Tabla</title>
-	<link rel="stylesheet" href="../../../css/main.css">
-	<link rel="stylesheet" href="virtualtabla.css">
+	<meta name="description" content="An in-browser tabla you can play with your keyboard or touch, with auto-play taals and adjustable tempo.">
+	<link rel="stylesheet" href="app/tabla.css">
 </head>
 <body>
 
-<header class="page-header">
-	<h1><a href="../../../index.html">Rishi Verma</a></h1>
-	<ul class="breadcrumbs">
-		<li><a href="../../../index.html">Home</a></li>
-		<li><a href="../../../index.html#arts">Arts</a></li>
-		<li class="current">Virtual Tabla</li>
-	</ul>
+<header class="topbar">
+	<a class="home" href="../../../index.html">Rishi&nbsp;Verma</a>
+	<span class="topbar-title">Virtual Tabla</span>
+	<a class="info-link" href="#about">About</a>
 </header>
 
-<main>
+<main class="instrument">
 
-<h2>Virtual Tabla</h2>
+	<!-- The two drums. Each bol has its own zone (positions match the original
+	     Flash app). Tap a zone, the pads, or use your keyboard. -->
+	<div id="stage" class="stage" aria-label="Tabla drums">
+		<img class="stage-bg" src="app/img/tabla-bg.jpg"
+		     alt="A pair of tabla drums on a wooden floor" draggable="false">
+		<svg id="zones" class="zones" viewBox="0 0 614 461" preserveAspectRatio="xMidYMid meet"></svg>
+		<button id="labelToggle" class="label-toggle" type="button" aria-pressed="true">Labels</button>
+		<p id="loading" class="loading" role="status" aria-live="polite" hidden>Loading sounds…</p>
+	</div>
 
-<p>The Virtual Tabla is a simulation of the Indian classical percussion instrument called the Tabla. You must have Adobe Flash Player installed to run this web-application.</p>
+	<!-- Bol pads: the playable syllables, grouped by drum. -->
+	<section class="pads-wrap" aria-label="Bols">
+		<div id="pads" class="pads"></div>
+		<p class="pads-hint">Tap a bol, tap a drum, or use your keyboard.</p>
+	</section>
 
-<h3>Functionality</h3>
-<ul>
-	<li>Use your mouse or touch-sensitive screen to play individual sounds, and watch the two drums light up.</li>
-	<li>Use your computer keyboard or touch-sensitive screen to play combined sounds &mdash; where the bayan (left drum) and tabla (right drum) are struck at the same time.</li>
-	<li>Listen and join in to the Virtual Tabla&rsquo;s synthetic musical accompaniment and auto-play mode.</li>
-</ul>
+	<!-- Transport: auto-play taals with adjustable tempo. -->
+	<section class="transport" aria-label="Auto-play">
+		<button id="playBtn" class="play" type="button" aria-label="Play">
+			<svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+			<svg class="ico-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+		</button>
+		<label class="field song-field">
+			<span class="field-label">Taal</span>
+			<select id="song" class="song"></select>
+		</label>
+		<label class="field tempo-field">
+			<span class="field-label">Tempo <b><span id="tempoVal">150</span> bpm</b></span>
+			<input id="tempo" class="tempo" type="range" min="60" max="260" step="2" value="150"
+			       aria-label="Tempo in beats per minute">
+		</label>
+		<div id="beatdots" class="beatdots" aria-hidden="true"></div>
+	</section>
 
-<div id="tabla-swf-box">
-	<p><a href="tabla-fullscreen.html">[Full-screen mode]</a></p>
-	<object classid="clsid:D27CDB6E-AE6D-11CF-96B8-444553540000" id="obj1" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0">
-		<param name="movie" value="tabla.swf">
-		<param name="quality" value="High">
-		<embed src="tabla.swf" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" name="obj1">
-	</object>
-</div>
-
-<h3>History</h3>
-<p>This project was started in 2007 and was featured in numerous online publications, blog posts, and even a Danish online newspaper. Although the main hosting site was taken down and web application technology has since matured, I&rsquo;ve kept it here for archival purposes.</p>
+	<section id="about" class="about">
+		<h2>About</h2>
+		<p>The <strong>Virtual Tabla</strong> simulates the North&nbsp;Indian classical percussion
+		pair: the smaller treble drum (dāyāñ) and the larger bass drum (bāyāñ). Strike a drum or a
+		bol to play, and watch it light up.</p>
+		<p><strong>Keyboard:</strong> <kbd>S</kbd> Ge · <kbd>E</kbd> Ke · <kbd>J</kbd> Na ·
+		<kbd>K</kbd> Tin · <kbd>L</kbd> Tun · <kbd>O</kbd> Te · <kbd>Space</kbd> play/stop.</p>
+		<p><strong>Auto-play</strong> cycles classical taals — Dādrā, Tīntāl, Jhaptāl, Keherwā — plus a
+		short composed solo, at a tempo you set.</p>
+		<p class="history">Originally built in 2007 in Adobe Flash and featured in several online
+		publications. <a href="legacy-flash.html">The archived Flash version is still here.</a></p>
+	</section>
 
 </main>
 
-<footer>
+<footer class="foot">
 	<p>&copy; Copyright Rishi Verma. All rights reserved.</p>
 </footer>
 
+<script src="app/tabla.js"></script>
 </body>
 </html>
