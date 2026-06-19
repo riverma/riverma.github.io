@@ -49,6 +49,12 @@
 			<input id="tempo" class="tempo" type="range" min="60" max="260" step="2" value="150"
 			       aria-label="Tempo in beats per minute">
 		</label>
+		<button id="bgToggle" class="bg-toggle" type="button" aria-pressed="false"
+		        aria-label="Toggle background song">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17V5l10-2v12"/><circle cx="6" cy="17" r="3"/><circle cx="16" cy="15" r="3"/></svg>
+			<span>Background song</span>
+			<span class="dot-ind" aria-hidden="true"></span>
+		</button>
 		<div id="beatdots" class="beatdots" aria-hidden="true"></div>
 	</section>
 
@@ -59,8 +65,9 @@
 		bol to play, and watch it light up.</p>
 		<p><strong>Keyboard:</strong> <kbd>S</kbd> Ge · <kbd>E</kbd> Ke · <kbd>J</kbd> Na ·
 		<kbd>K</kbd> Tin · <kbd>L</kbd> Tun · <kbd>O</kbd> Te · <kbd>Space</kbd> play/stop.</p>
-		<p><strong>Auto-play</strong> cycles classical taals — Dādrā, Tīntāl, Jhaptāl, Keherwā — plus a
-		short composed solo, at a tempo you set.</p>
+		<p><strong>Auto-play</strong> cycles classical taals — Dādrā, Tīntāl, Jhaptāl, Keherwā — at a
+		tempo you set. Switch on the <strong>background song</strong> to loop a melodic accompaniment
+		underneath.</p>
 		<p class="history">Originally built in 2007 in Adobe Flash and featured in several online
 		publications. <a href="legacy-flash.html">The archived Flash version is still here.</a></p>
 	</section>

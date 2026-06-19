@@ -80,8 +80,11 @@ const SONGS = {
 			4: ["ta"], 5: ["ke"], 6: ["ge", "tin"], 7: ["ta"]
 		}
 	},
-	solo: {
-		name: "Tabla Solo", taal: "composition", steps: 34,
+	// The background song (a lehra-style melodic accompaniment) — recovered from
+	// the original's `backgroundMusic` clip. Not a taal; it loops underneath the
+	// theka as a toggleable layer.
+	bg: {
+		name: "Background song", background: true, steps: 34,
 		events: {
 			0: ["note1"], 2: ["note1"], 4: ["note1"], 6: ["note2"], 7: ["note3"],
 			8: ["note4"], 10: ["note4"], 12: ["note4"], 14: ["note5"], 15: ["note6"],
@@ -221,15 +224,13 @@ const Visual = (() => {
 function strikeToken(token, when, vol) {
 	Audio.playAt(token, when || 0, vol);
 	// Schedule the visual to line up with the (possibly future) audio time.
+	// Only the playable bols light a drum zone; background-song notes are audio only.
+	if (!BOLS[token]) return;
 	const delay = when ? Math.max(0, (when - Audio.now()) * 1000) : 0;
 	setTimeout(() => {
-		if (BOLS[token]) {
-			Visual.strike(token);
-			const pad = document.querySelector('.pad[data-bol="' + token + '"]');
-			if (pad) { pad.classList.remove("struck"); void pad.offsetWidth; pad.classList.add("struck"); }
-		} else {
-			Visual.pulseAll();   // composed-solo phrase samples (no single zone)
-		}
+		Visual.strike(token);
+		const pad = document.querySelector('.pad[data-bol="' + token + '"]');
+		if (pad) { pad.classList.remove("struck"); void pad.offsetWidth; pad.classList.add("struck"); }
 	}, delay);
 }
 
@@ -237,49 +238,61 @@ function strikeToken(token, when, vol) {
    Sequencer — Web-Audio lookahead scheduler for the auto-play songs.
 --------------------------------------------------------------------------- */
 const Sequencer = (() => {
-	let song = null, bpm = 150, playing = false;
+	let taal = null, taalOn = false;      // the theka layer
+	const bg = SONGS.bg;
+	let bgOn = false;                     // the background-song layer
+	let bpm = 150;
 	let step = 0, nextTime = 0, timer = null;
 	const LOOKAHEAD = 0.1;     // seconds scheduled ahead
 	const TICK = 25;           // ms between scheduler runs
+	const BG_VOL = 0.7;        // background song sits under the bols
 	let onStep = null;
 
 	function stepDur() { return 60 / bpm; }
+	function running() { return taalOn || bgOn; }
 
 	function schedule() {
 		while (nextTime < Audio.now() + LOOKAHEAD) {
-			const tokens = song.events[step];
-			if (tokens) for (const t of tokens) strikeToken(t, nextTime);
-			const cur = step;
+			if (taalOn && taal) {
+				const tk = taal.events[step % taal.steps];
+				if (tk) for (const t of tk) strikeToken(t, nextTime);
+			}
+			if (bgOn) {
+				const bk = bg.events[step % bg.steps];
+				if (bk) for (const t of bk) strikeToken(t, nextTime, BG_VOL);
+			}
+			const cur = (taalOn && taal) ? step % taal.steps : -1;
 			const at = nextTime;
 			if (onStep) {
 				const delay = Math.max(0, (at - Audio.now()) * 1000);
 				setTimeout(() => onStep(cur), delay);
 			}
 			nextTime += stepDur();
-			step = (step + 1) % song.steps;
+			step++;
 		}
 	}
 
-	function start(key) {
-		Audio.resume();
-		song = SONGS[key];
-		step = 0;
-		nextTime = Audio.now() + 0.05;
-		playing = true;
-		schedule();
-		timer = setInterval(schedule, TICK);
+	// Start the clock when either layer turns on; stop it when both are off.
+	function sync(resetGrid) {
+		if (running()) {
+			Audio.resume();
+			if (resetGrid || !timer) { step = 0; nextTime = Audio.now() + 0.05; }
+			if (!timer) { schedule(); timer = setInterval(schedule, TICK); }
+		} else if (timer) {
+			clearInterval(timer); timer = null;
+			if (onStep) onStep(-1);
+		}
 	}
-	function stop() {
-		playing = false;
-		clearInterval(timer); timer = null;
-		if (onStep) onStep(-1);
-	}
+
 	return {
-		start, stop,
-		toggle: (key) => { playing ? stop() : start(key); },
+		setTaalKey: (key) => { taal = SONGS[key]; if (taalOn) sync(true); },
+		playTaal: (on) => { taalOn = on; sync(on); },        // starting a taal resets to a downbeat
+		setBg: (on) => { bgOn = on; sync(false); },           // background joins/leaves on the grid
 		setBpm: (v) => { bpm = v; },
 		setOnStep: (fn) => { onStep = fn; },
-		get playing() { return playing; },
+		get taalPlaying() { return taalOn; },
+		get bgOn() { return bgOn; },
+		get running() { return running(); },
 		get bpm() { return bpm; }
 	};
 })();
@@ -349,26 +362,29 @@ document.addEventListener("DOMContentLoaded", () => {
 	// --- pause auto-play when the tab is hidden (prevents a burst of stacked
 	//     notes when setInterval is throttled while the AudioContext clock runs) ---
 	document.addEventListener("visibilitychange", () => {
-		if (document.hidden && Sequencer.playing) {
-			Sequencer.stop();
+		if (document.hidden && Sequencer.running) {
+			Sequencer.playTaal(false);
+			Sequencer.setBg(false);
 			playBtn.classList.remove("playing");
 			playBtn.setAttribute("aria-label", "Play");
+			const bg = document.getElementById("bgToggle");
+			if (bg) { bg.classList.remove("on"); bg.setAttribute("aria-pressed", "false"); }
 		}
 	});
 
-	// --- song selector ---
+	// --- taal selector (background song is a separate layer, not listed here) ---
 	for (const key in SONGS) {
+		if (SONGS[key].background) continue;
 		const o = document.createElement("option");
 		o.value = key;
 		o.textContent = SONGS[key].name + " · " + SONGS[key].taal;
 		songSel.appendChild(o);
 	}
+	Sequencer.setTaalKey(songSel.value);
 
 	function rebuildBeatDots() {
 		const s = SONGS[songSel.value];
 		beatDots.innerHTML = "";
-		// Only show beat dots for the metrical thekas, not the free composition.
-		if (s.taal === "composition") return;
 		for (let i = 0; i < s.steps; i++) {
 			const d = document.createElement("span");
 			d.className = "dot";
@@ -380,22 +396,28 @@ document.addEventListener("DOMContentLoaded", () => {
 		dots.forEach((d, n) => d.classList.toggle("on", n === i));
 	});
 
+	const bgToggle = document.getElementById("bgToggle");
+
 	function togglePlay() {
-		if (Sequencer.playing) {
-			Sequencer.stop();
-			playBtn.classList.remove("playing");
-			playBtn.setAttribute("aria-label", "Play");
-		} else {
-			Sequencer.setBpm(parseInt(tempo.value, 10));
-			Sequencer.start(songSel.value);
-			playBtn.classList.add("playing");
-			playBtn.setAttribute("aria-label", "Stop");
-		}
+		const on = !Sequencer.taalPlaying;
+		Sequencer.setBpm(parseInt(tempo.value, 10));
+		Sequencer.playTaal(on);
+		playBtn.classList.toggle("playing", on);
+		playBtn.setAttribute("aria-label", on ? "Stop" : "Play");
 	}
 	playBtn.addEventListener("click", togglePlay);
 	songSel.addEventListener("change", () => {
 		rebuildBeatDots();
-		if (Sequencer.playing) { Sequencer.stop(); Sequencer.start(songSel.value); }
+		Sequencer.setTaalKey(songSel.value);   // re-syncs on a downbeat if playing
+	});
+
+	// --- background-song toggle (loops a melodic accompaniment under the taal) ---
+	bgToggle.addEventListener("click", () => {
+		const on = !Sequencer.bgOn;
+		Sequencer.setBpm(parseInt(tempo.value, 10));
+		Sequencer.setBg(on);
+		bgToggle.classList.toggle("on", on);
+		bgToggle.setAttribute("aria-pressed", String(on));
 	});
 	tempo.addEventListener("input", () => {
 		tempoVal.textContent = tempo.value;

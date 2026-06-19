@@ -214,6 +214,7 @@ body {
 	grid-template-areas:
 		"play song"
 		"play tempo"
+		"bg   bg"
 		"dots dots";
 	gap: 12px 14px;
 	align-items: center;
@@ -246,6 +247,34 @@ body {
 .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .song-field { grid-area: song; }
 .tempo-field { grid-area: tempo; }
+
+/* Background-song toggle — a pill that lights up when the accompaniment is on. */
+.bg-toggle {
+	grid-area: bg;
+	display: flex; align-items: center; gap: 9px;
+	padding: 9px 13px;
+	border: 1px solid var(--line); border-radius: 10px;
+	background: #1a110a; color: var(--muted);
+	font-family: inherit; font-size: 0.92em; letter-spacing: 0.02em;
+	cursor: pointer; -webkit-tap-highlight-color: transparent;
+	transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.bg-toggle svg {
+	width: 18px; height: 18px; flex: none;
+	fill: none; stroke: currentColor; stroke-width: 1.7;
+	stroke-linecap: round; stroke-linejoin: round;
+}
+.bg-toggle .dot-ind {
+	margin-left: auto; width: 9px; height: 9px; border-radius: 50%;
+	background: var(--line); transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.bg-toggle:hover { border-color: var(--amber-2); color: var(--ink); }
+.bg-toggle.on {
+	color: var(--ink); border-color: var(--amber-2);
+	background: linear-gradient(180deg, #2c1d11, #1c130b);
+	box-shadow: inset 0 0 0 1px rgba(255,140,26,0.25);
+}
+.bg-toggle.on .dot-ind { background: var(--amber); box-shadow: 0 0 8px var(--amber-2); }
 .field-label {
 	font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.12em;
 	color: var(--muted);
@@ -320,6 +349,7 @@ kbd {
 		grid-template-columns: auto 1.3fr 1.3fr;
 		grid-template-areas:
 			"play song tempo"
+			"play bg   bg"
 			"dots dots dots";
 	}
 }
@@ -348,6 +378,7 @@ kbd {
 		grid-template-areas:
 			"play song"
 			"play tempo"
+			"bg   bg"
 			"dots dots";
 	}
 	.about { grid-area: about; }
@@ -356,5 +387,5 @@ kbd {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.glow.lit, .pad.hit { animation-duration: 1ms; }
+	.zone.lit .z-glow, .pad.struck, .stage.pulse::after { animation-duration: 1ms; }
 }
