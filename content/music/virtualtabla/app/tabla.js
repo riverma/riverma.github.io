@@ -83,8 +83,11 @@ const SONGS = {
 	// The background song (a lehra-style melodic accompaniment) — recovered from
 	// the original's `backgroundMusic` clip. Not a taal; it loops underneath the
 	// theka as a toggleable layer.
+	// steps = 32 (not 34): the last note (note14) is at step 30, so a 32-step loop
+	// brings note1 back 2 beats later — the same cadence as the rest of the phrase —
+	// instead of leaving ~3 empty beats of dead air before it repeats.
 	bg: {
-		name: "Background song", background: true, steps: 34,
+		name: "Background song", background: true, steps: 32,
 		events: {
 			0: ["note1"], 2: ["note1"], 4: ["note1"], 6: ["note2"], 7: ["note3"],
 			8: ["note4"], 10: ["note4"], 12: ["note4"], 14: ["note5"], 15: ["note6"],
