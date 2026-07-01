@@ -26,6 +26,7 @@ if (new URLSearchParams(location.search).get('nofx') === '1') {
 let settings = loadSettings();
 let currentResults = null;        // last computed results — kept for map re-render on mode change
 let activeAbort = null;           // for in-flight Compare cancellation
+let lastComputeKey = null;        // settings snapshot the current results were computed with
 
 // --- Screen switching ---
 const SCREENS = new Set(['main', 'settings', 'about', 'credits']);
@@ -34,11 +35,17 @@ function showScreen(name) {
   document.querySelectorAll('.mc-screen').forEach(el => el.classList.toggle('is-active', el.dataset.screen === name));
   // Trigger Leaflet resize when returning to main.
   if (name === 'main') queueMicrotask(() => mapApi?.invalidate());
-  // Reload settings (user may have changed them) and re-paint results so a changed
-  // maintenance/units choice is reflected without requiring a fresh Compare.
+  // Reload settings (user may have changed them). If a route is already open and the
+  // settings that feed the calculations changed, recompute it so the numbers reflect the
+  // new settings — not just newly-run routes. Otherwise just re-paint (cheap display-only).
   if (name === 'main') {
     settings = loadSettings();
-    if (getState().status === 'results') paintResults(getState());
+    const s = getState();
+    if (s.start && s.end && JSON.stringify(settings) !== lastComputeKey) {
+      runCompare();
+    } else if (s.status === 'results') {
+      paintResults(s);
+    }
   }
   actions.setScreen(name);
   // Reflect in URL hash so links and reloads stay on the same screen.
@@ -76,7 +83,6 @@ const resultsApi = initResults(document.getElementById('results'), {
       if (sorted[0]) actions.setSelectedMode(sorted[0]);
     }
   },
-  onToggleExpand: (profile) => actions.toggleCardExpand(profile),
 });
 
 initAboutScreen(document.getElementById('aboutScreen'), { onClose: () => showScreen('main') });
@@ -101,6 +107,7 @@ async function runCompare() {
   try {
     const results = await computeAllModes(s.start, s.end, settings, { signal: activeAbort.signal });
     currentResults = results;
+    lastComputeKey = JSON.stringify(settings);   // remember which settings produced these numbers
     // Default selection: the top-sorted mode for the current signal.
     const sorted = sortProfiles(results, getState().sortBy || 'time', settings);
     const firstOk = sorted[0] || 'car';
@@ -125,7 +132,6 @@ function paintResults(s) {
     status: s.status,
     errorBanner: s.errorBanner,
     sortBy: s.sortBy,
-    expandedCards: s.expandedCards,
     includeMaintenance: settings.includeMaintenance,
   });
 }
@@ -174,8 +180,8 @@ if (params.get('demo') === '1') {
   const expandProfile = params.get('expand');
   if (expandProfile) {
     const unsub = subscribe((s) => {
-      if (s.status === 'results' && !s.expandedCards.has(expandProfile)) {
-        actions.toggleCardExpand(expandProfile);
+      if (s.status === 'results') {
+        setTimeout(() => resultsApi.setExpanded(expandProfile, true), 0);
         setTimeout(unsub, 0);
       }
     });

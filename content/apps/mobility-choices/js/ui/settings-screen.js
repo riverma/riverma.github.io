@@ -50,18 +50,9 @@ export function initSettingsScreen(rootEl, { onClose }) {
       }),
     ]));
 
-    // Vehicle / Driving
-    form.appendChild(section('Driving', [
-      selectField('Vehicle class', 'vehicleClass', VEHICLE_CLASS_LABELS),
-      mpgField(),
-      gasPriceField(),
-    ]));
-
-    // Cost
-    form.appendChild(section('Cost', [
-      checkboxField('Add maintenance / wear costs to estimates', 'includeMaintenance',
-        "Off by default. When on, vehicle wear and bike/e-bike maintenance are added to each " +
-        "mode's Cost. Energy (fuel or electricity) is always counted."),
+    // You — body weight (used for the calories shown in each card's activity detail)
+    form.appendChild(section('You', [
+      weightField(),
     ]));
 
     // Region
@@ -71,18 +62,27 @@ export function initSettingsScreen(rootEl, { onClose }) {
       numberField('Electricity ($ / kWh)', 'electricityUsdKwh', 0.001, 0, 1),
     ]));
 
+    // Cost
+    form.appendChild(section('Cost', [
+      checkboxField('Add maintenance / wear costs to estimates', 'includeMaintenance',
+        "Off by default. When on, vehicle wear and bike/e-bike maintenance are added to each " +
+        "mode's Cost. Energy (fuel or electricity) is always counted."),
+    ]));
+
     // E-bike
     form.appendChild(section('E-bike', [
       radioField('E-bike type', 'ebikeType', Object.entries(EBIKE_TYPE_LABELS).map(([v, l]) =>
         ({ value: v, label: `${l} — ${formatEbikeEfficiency(EBIKE_WH_PER_MI[v])}` }))),
     ]));
 
-    // You — body weight (used for the calories shown in each card's activity detail)
-    form.appendChild(section('You', [
-      weightField(),
+    // Vehicle / Driving
+    form.appendChild(section('Driving', [
+      selectField('Vehicle class', 'vehicleClass', VEHICLE_CLASS_LABELS),
+      mpgField(),
+      gasPriceField(),
     ]));
 
-    // GraphHopper
+    // GraphHopper (API token) — bottom
     form.appendChild(section('Optional: GraphHopper API key', [
       el('p', { class: 'mc-help' },
         'OSRM is the default router. If OSRM is slow or unavailable, paste a free GraphHopper key here (kept in your browser only). ',

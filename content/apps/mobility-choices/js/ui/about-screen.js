@@ -79,6 +79,24 @@ function body() {
       transit backend above.</li>
     </ul>
 
+    <h2>Caveats &amp; assumptions</h2>
+    <ul>
+      <li><strong>Driving times are free-flow.</strong> Routing uses speed-limit-based times with
+      no live traffic, so real-world drives usually take longer.</li>
+      <li><strong>E-bike routing is approximate.</strong> No router offers a native e-bike profile,
+      so we reuse the bicycle route (identical distance) and scale its duration down ~30% for
+      typical e-bike commute speeds.</li>
+      <li><strong>E-bike activity is lighter.</strong> E-bike minutes count toward the activity
+      goal, but at a lower intensity than an analog bike.</li>
+      <li><strong>Grid emissions need your state.</strong> With no state selected in Settings,
+      electric-car and e-bike emissions use the US-average grid intensity; pick your state for a
+      local figure.</li>
+      <li><strong>Long walks are shown anyway.</strong> Multi-hour walking routes appear for
+      comparison even when they aren't practical.</li>
+      <li><strong>Numbers are periodic snapshots.</strong> Prices, grid intensity, and cost
+      factors (EIA, EPA eGRID, AAA) drift over time and are updated occasionally, not live.</li>
+    </ul>
+
     <h2>Providers</h2>
     <ul>
       <li><strong>Routing:</strong> OSRM, hosted by

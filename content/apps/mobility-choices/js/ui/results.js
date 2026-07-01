@@ -1,7 +1,10 @@
 // Stacked results cards: every mode's full information visible inline.
-// There is no blended score — each mode shows independent signals (Cost, Time, Pollution,
-// Activity) as chips, and the expanded view lays each section out as a calculation table
-// showing how the numbers were derived. A sort bar at the top reorders by the chosen signal.
+// There is no blended score — each mode shows independent signals (Time, Cost, Pollution,
+// Activity) as chips, and the expanded view lays each signal out as a calculation table in
+// its own clearly-separated section. A sort bar at the top reorders by the chosen signal.
+//
+// Card expansion is owned here (not in global state) so the more-info panel can animate
+// open/closed smoothly without being torn down by an unrelated re-render.
 
 import { el, clear } from '../util/dom.js';
 import { formatDistance, formatDuration, formatUsd, formatKg } from '../util/units.js';
@@ -17,39 +20,45 @@ const SORT_OPTIONS   = [
   { key: 'active',    label: 'Activity'  },
 ];
 
-export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) {
+export function initResults(rootEl, { onSelect, onSortChange }) {
   const sortBar = el('div', { class: 'mc-sort-bar' });
   const cardsEl = el('div', { class: 'mc-cards' });
   rootEl.appendChild(sortBar);
   rootEl.appendChild(cardsEl);
 
-  function render({ results, selectedMode, units, status, errorBanner, sortBy, expandedCards, includeMaintenance }) {
+  const expanded = new Set();   // profiles whose detail is open — owned locally
+  let lastResults = null;       // reset expansion when a fresh comparison arrives
+
+  function render({ results, selectedMode, units, status, errorBanner, sortBy, includeMaintenance }) {
     clear(sortBar);
     clear(cardsEl);
 
-    if (status === 'idle') {
-      cardsEl.appendChild(renderEmptyHero());
-      return;
-    }
-    if (status === 'routing') {
-      cardsEl.appendChild(el('p', { class: 'mc-hint' }, 'Computing routes…'));
-      return;
-    }
-    if (status === 'error') {
-      cardsEl.appendChild(el('p', { class: 'mc-error' }, errorBanner || 'Something went wrong.'));
-      return;
-    }
+    if (status === 'idle')    { cardsEl.appendChild(renderEmptyHero()); return; }
+    if (status === 'routing') { cardsEl.appendChild(el('p', { class: 'mc-hint' }, 'Computing routes…')); return; }
+    if (status === 'error')   { cardsEl.appendChild(el('p', { class: 'mc-error' }, errorBanner || 'Something went wrong.')); return; }
 
-    // status === 'results'
+    // status === 'results' — collapse everything when the results object is new.
+    if (results !== lastResults) { expanded.clear(); lastResults = results; }
+
     sortBar.appendChild(renderSortBar(sortBy));
     const ordered = sortProfiles(results, sortBy, { includeMaintenance });
     ordered.forEach((profile, idx) => {
       const r = results[profile];
       const isSelected = profile === selectedMode;
-      const isExpanded = expandedCards?.has(profile);
       const isBest = idx === 0 && !r?.error && !r?.skipped;
-      cardsEl.appendChild(renderCard(profile, r, { isSelected, isExpanded, isBest, units, includeMaintenance }));
+      cardsEl.appendChild(renderCard(profile, r, { isSelected, isBest, units, includeMaintenance }));
     });
+  }
+
+  // Open/close a card's detail with animation. Used by the ?expand= demo hook.
+  function setExpanded(profile, open) {
+    if (open) expanded.add(profile); else expanded.delete(profile);
+    const card = cardsEl.querySelector(`[data-profile="${profile}"]`);
+    if (card) {
+      card.classList.toggle('is-expanded', open);
+      const btn = card.querySelector('.mc-more-btn');
+      if (btn) setMoreBtn(btn, open);
+    }
   }
 
   function renderSortBar(sortBy) {
@@ -67,9 +76,11 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     return wrap;
   }
 
-  function renderCard(profile, r, { isSelected, isExpanded, isBest, units, includeMaintenance }) {
+  function renderCard(profile, r, { isSelected, isBest, units, includeMaintenance }) {
+    const isOpen = expanded.has(profile);
     const card = el('article', {
-      class: 'mc-card' + (isSelected ? ' is-selected' : '') + (isBest ? ' is-best' : ''),
+      'data-profile': profile,
+      class: 'mc-card' + (isSelected ? ' is-selected' : '') + (isBest ? ' is-best' : '') + (isOpen ? ' is-expanded' : ''),
       style: {
         '--mc-card-accent': `var(--mc-c-${profile === 'foot' ? 'foot' : profile})`,
         '--mc-card-tint':   `var(--mc-c-${profile === 'foot' ? 'foot' : profile}-tint)`,
@@ -85,42 +96,52 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
       return card;
     }
 
-    // Header — icon, label, primary time + distance, best badge
+    // Header — icon, label, distance, best badge (time now lives in its own chip)
     const head = el('div', { class: 'mc-card-head' });
     const iconHost = el('span', { class: 'mc-card-icon', 'aria-hidden': 'true' });
     iconHost.appendChild(icon(r.icon));
     head.appendChild(iconHost);
     const headText = el('div', { class: 'mc-card-headtext' });
     headText.appendChild(el('h3', { class: 'mc-card-label' }, r.label));
-    headText.appendChild(el('p', { class: 'mc-card-sub' },
-      `${formatDuration(r.duration_min * 60)} · ${formatDistance(r.distance_mi * 1609.344, units)}`));
+    headText.appendChild(el('p', { class: 'mc-card-sub' }, formatDistance(r.distance_mi * 1609.344, units)));
     head.appendChild(headText);
     if (isBest) head.appendChild(el('span', { class: 'mc-best-badge' }, '★ Best'));
     card.appendChild(head);
 
-    // Three signal chips: Cost / Pollution / Activity
+    // Four signal chips: Time / Cost / Pollution / Activity
     const cost = tripCostUsd(r, { includeMaintenance });
     const metrics = el('div', { class: 'mc-metric-row' });
+    metrics.appendChild(metricChip('Time',      formatDuration(r.duration_min * 60), 'neutral'));
     metrics.appendChild(metricChip('Cost',      formatCostUsd(cost),    impactKlass(cost, 0.005, r.impact)));
     metrics.appendChild(metricChip('Pollution', formatPollutionChip(r), impactKlass(r.pollution.operational_kg, 0.001, r.impact)));
     metrics.appendChild(metricChip('Activity',  formatActivityChip(r),  r.activity.minutes > 0 ? 'benefit' : 'neutral'));
     card.appendChild(metrics);
 
-    // Expand button + detail panel
-    const moreBtn = el('button', {
-      class: 'mc-more-btn', type: 'button',
-      'aria-expanded': isExpanded ? 'true' : 'false',
-      onclick: () => onToggleExpand(profile),
+    // Expand button + animated collapse panel (always in the DOM so it can transition).
+    const moreBtn = el('button', { class: 'mc-more-btn', type: 'button' });
+    setMoreBtn(moreBtn, isOpen);
+    moreBtn.addEventListener('click', () => {
+      const open = !card.classList.contains('is-expanded');
+      card.classList.toggle('is-expanded', open);
+      if (open) expanded.add(profile); else expanded.delete(profile);
+      setMoreBtn(moreBtn, open);
     });
-    moreBtn.appendChild(el('span', {}, isExpanded ? 'Hide details' : 'More info'));
-    moreBtn.appendChild(icon(isExpanded ? 'chevronUp' : 'chevronDown'));
     card.appendChild(moreBtn);
 
-    if (isExpanded) {
-      card.appendChild(renderDetail(r, includeMaintenance));
-    }
+    const collapse = el('div', { class: 'mc-collapse' });
+    const inner = el('div', { class: 'mc-collapse-inner' });
+    inner.appendChild(renderDetail(r, includeMaintenance));
+    collapse.appendChild(inner);
+    card.appendChild(collapse);
 
     return card;
+  }
+
+  function setMoreBtn(btn, open) {
+    clear(btn);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.appendChild(el('span', {}, open ? 'Hide details' : 'More info'));
+    btn.appendChild(icon(open ? 'chevronUp' : 'chevronDown'));
   }
 
   function renderUnavailableCard(profile, r) {
@@ -135,8 +156,6 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
 
   function renderDetail(r, includeMaintenance) {
     const wrap = el('div', { class: 'mc-card-detail' });
-
-    // Each signal is grouped in its own boxed section so the three are clearly separated.
 
     // Activity & health
     const activityExtras = [];
@@ -161,12 +180,7 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     }
     wrap.appendChild(detailSection('Pollution', renderPollutionTable(r), pollExtras));
 
-    // Caveats — compact muted text, not bullets
-    if (r.caveats?.length) {
-      const caveatNodes = r.caveats.map(c => el('p', { class: 'mc-detail-text mc-caveat' }, c));
-      wrap.appendChild(detailSection('Caveats', null, caveatNodes));
-    }
-
+    // Caveats/assumptions intentionally omitted here — they live on the About page.
     return wrap;
   }
 
@@ -253,7 +267,7 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     );
   }
 
-  return { render };
+  return { render, setExpanded };
 }
 
 // ---- Formatting / classification helpers ----
@@ -300,6 +314,6 @@ function renderEmptyHero() {
   hero.appendChild(row);
   hero.appendChild(el('h2', { class: 'mc-empty-title' }, 'Four ways to get there.'));
   hero.appendChild(el('p', { class: 'mc-empty-sub' },
-    'Pick a start and end above — we\'ll show the cost, time, pollution, and physical activity of each.'));
+    'Pick a start and end above — we\'ll show the time, cost, pollution, and physical activity of each.'));
   return hero;
 }
