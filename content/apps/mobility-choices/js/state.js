@@ -12,7 +12,7 @@ function freshState() {
     status: 'idle',                          // 'idle' | 'routing' | 'results' | 'error'
     results: null,                           // { car: ModeResult|{error}, ... }
     selectedMode: 'car',                     // which mode's route is highlighted on the map
-    sortBy: 'overall',                       // 'overall'|'money'|'time'|'carbon'|'health'
+    sortBy: 'time',                          // 'time'|'cost'|'pollution'|'active'
     expandedCards: new Set(),                // profile names whose detail panels are expanded
     errorBanner: null,                       // top-of-screen banner text or null
   };

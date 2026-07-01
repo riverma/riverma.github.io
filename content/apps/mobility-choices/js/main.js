@@ -34,8 +34,12 @@ function showScreen(name) {
   document.querySelectorAll('.mc-screen').forEach(el => el.classList.toggle('is-active', el.dataset.screen === name));
   // Trigger Leaflet resize when returning to main.
   if (name === 'main') queueMicrotask(() => mapApi?.invalidate());
-  // Reload settings (user may have changed them).
-  if (name === 'main') settings = loadSettings();
+  // Reload settings (user may have changed them) and re-paint results so a changed
+  // maintenance/units choice is reflected without requiring a fresh Compare.
+  if (name === 'main') {
+    settings = loadSettings();
+    if (getState().status === 'results') paintResults(getState());
+  }
   actions.setScreen(name);
   // Reflect in URL hash so links and reloads stay on the same screen.
   if (location.hash !== `#${name}` && name !== 'main') location.hash = `#${name}`;
@@ -68,7 +72,7 @@ const resultsApi = initResults(document.getElementById('results'), {
     actions.setSortBy(key);
     // After sorting changes, the top-ranked card becomes the new "best" — follow it on the map.
     if (currentResults) {
-      const sorted = sortProfiles(currentResults, key);
+      const sorted = sortProfiles(currentResults, key, settings);
       if (sorted[0]) actions.setSelectedMode(sorted[0]);
     }
   },
@@ -97,8 +101,8 @@ async function runCompare() {
   try {
     const results = await computeAllModes(s.start, s.end, settings, { signal: activeAbort.signal });
     currentResults = results;
-    // Default selection: the top-sorted mode (best overall score).
-    const sorted = sortProfiles(results, getState().sortBy || 'overall');
+    // Default selection: the top-sorted mode for the current signal.
+    const sorted = sortProfiles(results, getState().sortBy || 'time', settings);
     const firstOk = sorted[0] || 'car';
     setState({ status: 'results', results, selectedMode: firstOk });
     mapApi.setMarkers(s.start, s.end);
@@ -113,7 +117,7 @@ async function runCompare() {
 
 // --- Render on state changes ---
 let lastRenderedSelectedMode = null;
-subscribe((s) => {
+function paintResults(s) {
   resultsApi.render({
     results: s.results,
     selectedMode: s.selectedMode,
@@ -122,7 +126,11 @@ subscribe((s) => {
     errorBanner: s.errorBanner,
     sortBy: s.sortBy,
     expandedCards: s.expandedCards,
+    includeMaintenance: settings.includeMaintenance,
   });
+}
+subscribe((s) => {
+  paintResults(s);
   // Sync map highlight to state.selectedMode whenever it changes.
   if (s.status === 'results' && s.selectedMode !== lastRenderedSelectedMode && currentResults) {
     mapApi.setMode(s.selectedMode);
@@ -149,7 +157,13 @@ window.addEventListener('resize', () => mapApi.invalidate());
 // --- Demo trigger for screenshots / shareable preview URLs ---
 // ?demo=1 → auto-fires the Pasadena→DTLA comparison so the loaded state is reproducible.
 // ?expand=<profile> → also auto-expand that card's detail panel.
+// ?sort=time|cost|pollution|active → preselect a sort signal.
+// ?maint=1 → include maintenance/wear in Cost for this session (mirrors the Settings toggle).
 const params = new URLSearchParams(location.search);
+if (['time', 'cost', 'pollution', 'active'].includes(params.get('sort'))) {
+  actions.setSortBy(params.get('sort'));
+}
+if (params.get('maint') === '1') settings.includeMaintenance = true;
 if (params.get('demo') === '1') {
   actions.setStart({ lat: 34.1478, lon: -118.1445, label: 'Pasadena, CA' });
   actions.setEnd  ({ lat: 34.0522, lon: -118.2437, label: 'Downtown Los Angeles, CA' });

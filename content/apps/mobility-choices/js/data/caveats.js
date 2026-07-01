@@ -8,12 +8,15 @@ export const CAVEATS = {
     "Driving time is a free-flow estimate based on speed limits — it does not account for live traffic.",
   walkingLongRoute:
     "Routes longer than a few hours of walking are shown for comparison but unlikely to be practical.",
-  healthEstimate:
-    "Health benefit is a simplified per-trip share of the WHO HEAT methodology, scaled by your assumed trip frequency. " +
-    "It estimates monetized mortality-risk reduction if this trip is part of a regular pattern.",
+  activityEstimate:
+    "Active minutes count moderate-or-greater movement (≥3 METs). The ~11% lower risk of early " +
+    "death refers to regularly reaching the 150-minutes-per-week guideline — not to a single trip.",
+  ebikeLighter:
+    "E-bike pedalling still clears the moderate-activity threshold, but at a lighter intensity " +
+    "than an analog bike — its minutes count, with that caveat.",
   evGridFallback:
-    "EV CO₂ uses the US national-average grid intensity because no state is selected in Settings.",
-  carbonFromFood:
-    "Active-mode CO₂ counts the lifecycle carbon of the extra food calories required, " +
-    "using a global-average diet figure (~2.2 g CO₂e/kcal). Lower-impact diets reduce this proportionally.",
+    "EV pollution uses the US national-average grid intensity because no state is selected in Settings.",
+  pollutionFootnote:
+    "Pollution shown is operational only — what the trip emits into the air you breathe. Active modes " +
+    "are ~zero. The lifecycle carbon of the extra food calories (~2.2 g CO₂e/kcal) is excluded here; see About.",
 };

@@ -57,6 +57,13 @@ export function initSettingsScreen(rootEl, { onClose }) {
       gasPriceField(),
     ]));
 
+    // Cost
+    form.appendChild(section('Cost', [
+      checkboxField('Add maintenance / wear costs to estimates', 'includeMaintenance',
+        "Off by default. When on, vehicle wear and bike/e-bike maintenance are added to each " +
+        "mode's Cost. Energy (fuel or electricity) is always counted."),
+    ]));
+
     // Region
     form.appendChild(section('Region (affects grid CO₂ and default gas price)', [
       selectField('US state', 'stateCode',
@@ -70,16 +77,17 @@ export function initSettingsScreen(rootEl, { onClose }) {
         ({ value: v, label: `${l} — ${formatEbikeEfficiency(EBIKE_WH_PER_MI[v])}` }))),
     ]));
 
-    // You — weight + value of time
+    // You — body weight (used for the calories shown in each card's activity detail)
     form.appendChild(section('You', [
       weightField(),
-      numberField('Value of your time ($ / hour)', 'valueOfTimeUsdPerHr', 0.5, 0, 200),
     ]));
 
     // GraphHopper
     form.appendChild(section('Optional: GraphHopper API key', [
       el('p', { class: 'mc-help' },
-        'OSRM is the default router. If OSRM is slow or unavailable, paste a free GraphHopper key here (kept in your browser only).'),
+        'OSRM is the default router. If OSRM is slow or unavailable, paste a free GraphHopper key here (kept in your browser only). ',
+        el('a', { href: 'https://www.graphhopper.com/dashboard/#/register', target: '_blank', rel: 'noopener' },
+          'Get a free key →')),
       textField('API key', 'graphhopperKey', 'paste key or leave empty'),
     ]));
 
@@ -110,6 +118,18 @@ export function initSettingsScreen(rootEl, { onClose }) {
       });
       wrap.appendChild(el('label', { for: id, class: 'mc-radio' }, input, ' ', opt.label));
     }
+    return wrap;
+  }
+
+  function checkboxField(label, key, help) {
+    const id = `set-${key}`;
+    const input = el('input', {
+      type: 'checkbox', id, name: key, checked: !!working[key],
+      onchange: (e) => { working[key] = e.target.checked; },
+    });
+    const row = el('label', { for: id, class: 'mc-radio' }, input, ' ', label);
+    const wrap = el('fieldset', { class: 'mc-field' }, row);
+    if (help) wrap.appendChild(el('p', { class: 'mc-help' }, help));
     return wrap;
   }
 

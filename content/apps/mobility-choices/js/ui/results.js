@@ -1,24 +1,20 @@
 // Stacked results cards: every mode's full information visible inline.
-// Each card shows monetary cost, monetised carbon, and health benefit/cost as colored
-// chips, with a combined overall score prominent and an in-card "More info" expand
-// for the detailed breakdown. A sort bar at the top reorders the cards.
+// There is no blended score — each mode shows independent signals (Cost, Time, Pollution,
+// Activity) as chips, and the expanded view lays each section out as a calculation table
+// showing how the numbers were derived. A sort bar at the top reorders by the chosen signal.
 
 import { el, clear } from '../util/dom.js';
-import {
-  formatDistance, formatDuration, formatUsd, formatKg, formatCalories,
-  metersToMiles, kgToLb, mphToKmh,
-} from '../util/units.js';
-import { MODE_COLORS } from './map.js';
+import { formatDistance, formatDuration, formatUsd, formatKg } from '../util/units.js';
 import { icon } from './icons.js';
-import { sortProfiles } from '../engine/index.js';
+import { sortProfiles, tripCostUsd } from '../engine/index.js';
+import { ACTIVITY_WEEKLY_GOAL_MIN, ACTIVITY_MORTALITY_REDUCTION_PCT } from '../data/constants.js';
 
 const PROFILE_ORDER  = ['car', 'bicycle', 'ebike', 'foot'];
 const SORT_OPTIONS   = [
-  { key: 'overall', label: 'Overall score' },
-  { key: 'money',   label: 'Cost'          },
-  { key: 'time',    label: 'Time'          },
-  { key: 'carbon',  label: 'Carbon'        },
-  { key: 'health',  label: 'Health'        },
+  { key: 'time',      label: 'Time'      },
+  { key: 'cost',      label: 'Cost'      },
+  { key: 'pollution', label: 'Pollution' },
+  { key: 'active',    label: 'Activity'  },
 ];
 
 export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) {
@@ -27,7 +23,7 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
   rootEl.appendChild(sortBar);
   rootEl.appendChild(cardsEl);
 
-  function render({ results, selectedMode, units, status, errorBanner, sortBy, expandedCards }) {
+  function render({ results, selectedMode, units, status, errorBanner, sortBy, expandedCards, includeMaintenance }) {
     clear(sortBar);
     clear(cardsEl);
 
@@ -46,13 +42,13 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
 
     // status === 'results'
     sortBar.appendChild(renderSortBar(sortBy));
-    const ordered = sortProfiles(results, sortBy);
+    const ordered = sortProfiles(results, sortBy, { includeMaintenance });
     ordered.forEach((profile, idx) => {
       const r = results[profile];
       const isSelected = profile === selectedMode;
       const isExpanded = expandedCards?.has(profile);
       const isBest = idx === 0 && !r?.error && !r?.skipped;
-      cardsEl.appendChild(renderCard(profile, r, { isSelected, isExpanded, isBest, units, sortBy }));
+      cardsEl.appendChild(renderCard(profile, r, { isSelected, isExpanded, isBest, units, includeMaintenance }));
     });
   }
 
@@ -71,7 +67,7 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     return wrap;
   }
 
-  function renderCard(profile, r, { isSelected, isExpanded, isBest, units, sortBy }) {
+  function renderCard(profile, r, { isSelected, isExpanded, isBest, units, includeMaintenance }) {
     const card = el('article', {
       class: 'mc-card' + (isSelected ? ' is-selected' : '') + (isBest ? ' is-best' : ''),
       style: {
@@ -79,7 +75,6 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
         '--mc-card-tint':   `var(--mc-c-${profile === 'foot' ? 'foot' : profile}-tint)`,
       },
       onclick: (e) => {
-        // Don't steal taps from interactive children.
         if (e.target.closest('button, a, summary')) return;
         onSelect(profile);
       },
@@ -90,7 +85,7 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
       return card;
     }
 
-    // Header — icon, label, primary time, best badge
+    // Header — icon, label, primary time + distance, best badge
     const head = el('div', { class: 'mc-card-head' });
     const iconHost = el('span', { class: 'mc-card-icon', 'aria-hidden': 'true' });
     iconHost.appendChild(icon(r.icon));
@@ -103,22 +98,12 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     if (isBest) head.appendChild(el('span', { class: 'mc-best-badge' }, '★ Best'));
     card.appendChild(head);
 
-    // Overall score (prominent) — higher = better. Positive = net benefit (green).
-    const total = r.score.total_usd;
-    const totalKlass = total > 0.01 ? 'mc-benefit' : (total < -0.01 ? 'mc-cost' : 'mc-neutral');
-    const totalLabel = total > 0.01 ? 'Net benefit' : (total < -0.01 ? 'Net cost' : 'Break-even');
-    const totalDisplay = total > 0 ? `+${formatUsd(total)}` : (total < 0 ? `−${formatUsd(-total)}` : '$0.00');
-    const scoreRow = el('div', { class: 'mc-score-row' },
-      el('span', { class: 'mc-score-label' }, totalLabel),
-      el('span', { class: `mc-score-value ${totalKlass}` }, totalDisplay),
-    );
-    card.appendChild(scoreRow);
-
-    // Three metric chips: money / carbon / health
+    // Three signal chips: Cost / Pollution / Activity
+    const cost = tripCostUsd(r, { includeMaintenance });
     const metrics = el('div', { class: 'mc-metric-row' });
-    metrics.appendChild(metricChip('Money',  formatCostUsd(r.cost.total),       r.cost.total > 0 ? 'cost' : 'neutral'));
-    metrics.appendChild(metricChip('Carbon', formatCarbonChip(r),               r.co2.total_kg > 0.001 ? 'cost' : 'neutral'));
-    metrics.appendChild(metricChip('Health', formatHealthChip(r),               healthKlass(r)));
+    metrics.appendChild(metricChip('Cost',      formatCostUsd(cost),    impactKlass(cost, 0.005, r.impact)));
+    metrics.appendChild(metricChip('Pollution', formatPollutionChip(r), impactKlass(r.pollution.operational_kg, 0.001, r.impact)));
+    metrics.appendChild(metricChip('Activity',  formatActivityChip(r),  r.activity.minutes > 0 ? 'benefit' : 'neutral'));
     card.appendChild(metrics);
 
     // Expand button + detail panel
@@ -132,7 +117,7 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     card.appendChild(moreBtn);
 
     if (isExpanded) {
-      card.appendChild(renderDetail(r, units));
+      card.appendChild(renderDetail(r, includeMaintenance));
     }
 
     return card;
@@ -148,101 +133,117 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
     return fallback;
   }
 
-  function renderDetail(r, units) {
+  function renderDetail(r, includeMaintenance) {
     const wrap = el('div', { class: 'mc-card-detail' });
 
-    // Score breakdown — show every component that goes into the overall number
-    wrap.appendChild(renderScoreBreakdown(r));
+    // Each signal is grouped in its own boxed section so the three are clearly separated.
 
-    // Cost breakdown
-    if (Object.keys(r.cost.breakdown).length) {
-      wrap.appendChild(detailHeading('Cost breakdown'));
-      const ul = el('ul', { class: 'mc-breakdown' });
-      if (r.cost.breakdown.fuel != null)         ul.appendChild(el('li', {}, `Fuel: ${formatUsd(r.cost.breakdown.fuel)}`));
-      if (r.cost.breakdown.electricity != null)  ul.appendChild(el('li', {}, `Electricity: ${formatUsd(r.cost.breakdown.electricity)}`));
-      if (r.cost.breakdown.maintenance != null)  ul.appendChild(el('li', {}, `Maintenance & wear: ${formatUsd(r.cost.breakdown.maintenance)}`));
-      if (r.cost.breakdown.wear != null)         ul.appendChild(el('li', {}, `Maintenance & wear: ${formatUsd(r.cost.breakdown.wear)}`));
-      wrap.appendChild(ul);
+    // Activity & health
+    const activityExtras = [];
+    if (r.activity.minutes > 0) {
+      activityExtras.push(el('p', { class: 'mc-detail-text mc-caption' },
+        `Regularly reaching ${ACTIVITY_WEEKLY_GOAL_MIN} min/week is linked to ~${ACTIVITY_MORTALITY_REDUCTION_PCT}% lower risk of early death.`));
     }
+    wrap.appendChild(detailSection('Activity & health', renderActivityTable(r), activityExtras));
 
-    // CO2 breakdown
-    if (Object.keys(r.co2.breakdown).length) {
-      wrap.appendChild(detailHeading('Carbon breakdown'));
-      const ul = el('ul', { class: 'mc-breakdown' });
-      if (r.co2.breakdown.tailpipe != null) ul.appendChild(el('li', {}, `Tailpipe: ${formatKg(r.co2.breakdown.tailpipe)}`));
-      if (r.co2.breakdown.grid != null)     ul.appendChild(el('li', {}, `Grid electricity: ${formatKg(r.co2.breakdown.grid)}`));
-      if (r.co2.breakdown.food != null)     ul.appendChild(el('li', {}, `Food calories (replacement): ${formatKg(r.co2.breakdown.food)}`));
-      wrap.appendChild(ul);
+    // Cost
+    wrap.appendChild(detailSection('Cost', renderCostTable(r, includeMaintenance)));
+
+    // Pollution
+    const pollExtras = [];
+    if (r.pollution.hasTailpipe) {
+      pollExtras.push(el('p', { class: 'mc-detail-text mc-caption' },
+        'Plus local pollutants — PM2.5, NOx, VOCs, CO — that electric and active modes avoid.'));
     }
-
-    // Health detail
-    if (r.health.calories_burned > 0) {
-      wrap.appendChild(detailHeading('Activity'));
-      wrap.appendChild(el('p', { class: 'mc-detail-text' },
-        `${formatCalories(r.health.calories_burned)} burned · ${formatDuration(r.health.minutes_active * 60)} of active travel.`));
+    if (r.pollution.food_kg > 0.001) {
+      pollExtras.push(el('p', { class: 'mc-detail-text mc-caption' },
+        `Lifecycle CO₂ of the extra food calories ≈ ${formatKg(r.pollution.food_kg)} (excluded — see About).`));
     }
+    wrap.appendChild(detailSection('Pollution', renderPollutionTable(r), pollExtras));
 
+    // Caveats — compact muted text, not bullets
     if (r.caveats?.length) {
-      wrap.appendChild(detailHeading('Caveats'));
-      const ul = el('ul', { class: 'mc-breakdown' });
-      r.caveats.forEach(c => ul.appendChild(el('li', {}, c)));
-      wrap.appendChild(ul);
+      const caveatNodes = r.caveats.map(c => el('p', { class: 'mc-detail-text mc-caveat' }, c));
+      wrap.appendChild(detailSection('Caveats', null, caveatNodes));
     }
 
     return wrap;
+  }
+
+  // A boxed, clearly-separated section: heading + (optional) table + extra notes.
+  function detailSection(title, tableEl, extras = []) {
+    const sec = el('section', { class: 'mc-detail-section' });
+    sec.appendChild(detailHeading(title));
+    if (tableEl) sec.appendChild(tableEl);
+    extras.forEach(n => sec.appendChild(n));
+    return sec;
+  }
+
+  // ---- Calculation tables ----
+
+  function calcTable(rows) {
+    const table = el('table', { class: 'mc-calc-table' });
+    table.appendChild(el('thead', {}, el('tr', {},
+      el('th', {}, 'Item'),
+      el('th', {}, 'Calculation'),
+      el('th', { class: 'mc-calc-amount' }, 'Amount'),
+    )));
+    const tb = el('tbody', {});
+    for (const row of rows) {
+      tb.appendChild(el('tr', { class: row.klass || '' },
+        el('td', {}, row.label),
+        el('td', { class: 'mc-calc-calc' }, row.calc || '—'),
+        el('td', { class: 'mc-calc-amount' }, row.amount),
+      ));
+    }
+    table.appendChild(tb);
+    return table;
+  }
+
+  function renderActivityTable(r) {
+    if (r.activity.minutes <= 0) {
+      return calcTable([{ label: 'Physical activity', calc: 'seated the whole way', amount: '0 min', klass: 'mc-calc-row--total' }]);
+    }
+    const min = Math.round(r.activity.minutes);
+    const pct = Math.round((min / ACTIVITY_WEEKLY_GOAL_MIN) * 100);
+    const cal = Math.round(r.activity.calories);
+    const effort = r.activity.met >= 6 ? 'vigorous effort'
+                 : r.activity.met >= 3 ? 'moderate effort' : 'light effort';
+    const lighter = r.activity.lighter ? ' (lighter)' : '';
+    return calcTable([
+      { label: 'Active minutes' + lighter, calc: 'the whole trip is active', amount: `${min} min` },
+      { label: 'Share of weekly goal', calc: `${min} of ${ACTIVITY_WEEKLY_GOAL_MIN} min per week`, amount: `${pct}%` },
+      { label: 'Calories burned', calc: `${effort}, ${Math.round(r.activity.weightKg)} kg, ${formatDuration(min * 60)}`, amount: `${cal} kcal` },
+    ]);
+  }
+
+  function renderCostTable(r, includeMaintenance) {
+    const rows = [];
+    for (const row of r.cost.rows) {
+      const counted = !row.optional || includeMaintenance;
+      rows.push({
+        label: row.label + (row.optional && !includeMaintenance ? ' — not counted' : ''),
+        calc: row.calc,
+        amount: formatUsd(row.usd),
+        klass: counted ? '' : 'mc-calc-row--muted',
+      });
+    }
+    rows.push({ label: 'Total cost', calc: '', amount: formatCostUsd(tripCostUsd(r, { includeMaintenance })), klass: 'mc-calc-row--total' });
+    return calcTable(rows);
+  }
+
+  function renderPollutionTable(r) {
+    const rows = r.pollution.rows.map(row => ({ label: row.label, calc: row.calc, amount: formatKg(row.kg) }));
+    if (!rows.length) {
+      rows.push({ label: 'Operational emissions', calc: 'human-powered', amount: '0 kg', klass: 'mc-calc-row--total' });
+    } else if (rows.length > 1) {
+      rows.push({ label: 'Total', calc: '', amount: formatKg(r.pollution.operational_kg), klass: 'mc-calc-row--total' });
+    }
+    return calcTable(rows);
   }
 
   function detailHeading(text) {
     return el('h4', { class: 'mc-detail-h' }, text);
-  }
-
-  function renderScoreBreakdown(r) {
-    const s = r.score;
-    const wrap = el('div', { class: 'mc-score-breakdown' });
-    wrap.appendChild(detailHeading('How this score works'));
-    wrap.appendChild(el('p', { class: 'mc-detail-text' },
-      'Higher score is better. Money, time, and carbon all reduce it; only health benefit adds to it.'));
-
-    const lines = el('div', { class: 'mc-score-lines' });
-    lines.appendChild(scoreLine('Health benefit', s.health_usd, 'add',
-      r.health.calories_burned ? `${Math.round(r.health.calories_burned)} kcal × $0.02/kcal` : 'no active travel'));
-    lines.appendChild(scoreLine('Money cost', s.money_usd, 'sub',
-      `paid for ${r.label.toLowerCase()}`));
-    lines.appendChild(scoreLine('Time cost', s.time_usd, 'sub',
-      `${formatDuration(r.duration_min * 60)} × $${s.vot_usd_per_hr.toFixed(2)}/hr`));
-    lines.appendChild(scoreLine('Carbon cost', s.carbon_usd, 'sub',
-      `${formatKg(r.co2.total_kg)} × $0.19/kg (EPA SC-CO₂)`));
-
-    // Final
-    const total = s.total_usd;
-    const klass = total > 0.01 ? 'mc-benefit' : (total < -0.01 ? 'mc-cost' : 'mc-neutral');
-    const sign  = total > 0 ? '+' : (total < 0 ? '−' : '');
-    const display = `${sign}${formatUsd(Math.abs(total))}`;
-    lines.appendChild(el('div', { class: 'mc-score-line mc-score-line--total' },
-      el('span', { class: 'mc-score-line-label' }, 'Overall score'),
-      el('span', { class: `mc-score-line-value ${klass}` }, display),
-    ));
-
-    wrap.appendChild(lines);
-    wrap.appendChild(el('p', { class: 'mc-detail-text mc-score-note' },
-      'Tune your value of time, body weight, MPG, and gas price in Settings — they all feed this calculation.'));
-    return wrap;
-  }
-
-  function scoreLine(label, valueUsd, op, hint) {
-    // op: 'add' (counted positive — health) or 'sub' (counted negative — costs).
-    // We always display the absolute $, prefixed with + or − to make the sign visible.
-    const sign = op === 'add' ? '+' : '−';
-    const klass = (op === 'add' && valueUsd > 0.005) ? 'mc-benefit'
-                : (op === 'sub' && valueUsd > 0.005) ? 'mc-cost' : 'mc-neutral';
-    const v = Math.abs(valueUsd) < 0.005 ? '$0.00' : `${sign}${formatUsd(Math.abs(valueUsd))}`;
-    return el('div', { class: 'mc-score-line' },
-      el('div', { class: 'mc-score-line-text' },
-        el('span', { class: 'mc-score-line-label' }, label),
-        el('span', { class: 'mc-score-line-hint' }, hint),
-      ),
-      el('span', { class: `mc-score-line-value ${klass}` }, v),
-    );
   }
 
   function metricChip(label, valueText, klass) {
@@ -255,35 +256,29 @@ export function initResults(rootEl, { onSelect, onSortChange, onToggleExpand }) 
   return { render };
 }
 
-// ---- Formatting helpers ----
+// ---- Formatting / classification helpers ----
 
-function formatSignedUsd(v) {
-  if (Math.abs(v) < 0.01) return '$0.00';
-  if (v < 0) return `+${formatUsd(-v)}`;   // negative = benefit; show with +
-  return formatUsd(v);
+// Chip color: zero (free/none) → green; otherwise high-impact (gas car) → red, low-impact
+// (electric car, e-bike, bike) → orange.
+function impactKlass(value, threshold, impact) {
+  if (value < threshold) return 'benefit';
+  return impact === 'high' ? 'cost' : 'warn';
 }
 
 function formatCostUsd(v) {
-  if (Math.abs(v) < 0.005) return 'free';
+  if (Math.abs(v) < 0.005) return '$0';
   return formatUsd(v);
 }
 
-function formatCarbonChip(r) {
-  // Show kg primarily, with the $ social cost in a sub-line via tooltip text
-  return formatKg(r.co2.total_kg);
+function formatPollutionChip(r) {
+  if (r.pollution.operational_kg < 0.001) return '0 kg';
+  return formatKg(r.pollution.operational_kg);
 }
 
-function formatHealthChip(r) {
-  const v = r.health.value_usd || 0;
-  if (Math.abs(v) < 0.5) return '—';
-  return `+${formatUsd(v)}`;
-}
-
-function healthKlass(r) {
-  const v = r.health.value_usd || 0;
-  if (v > 0.5) return 'benefit';
-  if (v < -0.5) return 'cost';
-  return 'neutral';
+function formatActivityChip(r) {
+  const min = Math.round(r.activity.minutes || 0);
+  if (min <= 0) return '—';
+  return `${min} min`;
 }
 
 function profileLabel(profile) {
@@ -305,6 +300,6 @@ function renderEmptyHero() {
   hero.appendChild(row);
   hero.appendChild(el('h2', { class: 'mc-empty-title' }, 'Four ways to get there.'));
   hero.appendChild(el('p', { class: 'mc-empty-sub' },
-    'Pick a start and end above — we\'ll show you the full cost of each: money, time, carbon, and what it does for you.'));
+    'Pick a start and end above — we\'ll show the cost, time, pollution, and physical activity of each.'));
   return hero;
 }

@@ -1,4 +1,4 @@
-// Driving cost / CO2 / health for a single route.
+// Driving cost / pollution / activity for a single route.
 
 import {
   KG_CO2_PER_GAL_GASOLINE, VEHICLE_WEAR_USD_PER_MI,
@@ -20,49 +20,45 @@ export function compute(route, settings) {
 
   const vehicleClass = settings.vehicleClass || 'medium_sedan';
   const isEV = vehicleClass === 'ev';
+  const wearRate = VEHICLE_WEAR_USD_PER_MI[vehicleClass] || VEHICLE_WEAR_USD_PER_MI.medium_sedan;
+  const wear = distance_mi * wearRate;
 
-  let fuel = 0, electricity = 0;
-  let co2_tailpipe = 0, co2_grid = 0;
+  const costRows = [];
+  const pollutionRows = [];
+  let energy = 0, energyLabel, operational_co2 = 0;
 
   if (isEV) {
     const kwh = distance_mi * (settings.evKwhPerMi || EV_KWH_PER_MI_DEFAULT);
-    electricity = kwh * (settings.electricityUsdKwh ?? 0.18);
+    const elecPrice = settings.electricityUsdKwh ?? 0.18;
     const gridIntensity = EGRID_KG_CO2_PER_KWH[settings.stateCode] ?? US_AVG_GRID_KG_CO2_KWH;
-    co2_grid = kwh * gridIntensity;
+    energy = kwh * elecPrice;
+    energyLabel = 'Electricity';
+    operational_co2 = kwh * gridIntensity;
     if (!settings.stateCode) caveats.push(CAVEATS.evGridFallback);
+    costRows.push({ label: 'Electricity', calc: `${kwh.toFixed(1)} kWh × $${elecPrice.toFixed(2)}/kWh`, usd: energy });
+    pollutionRows.push({ label: 'Grid electricity CO₂', calc: `${kwh.toFixed(1)} kWh × ${gridIntensity.toFixed(3)} kg/kWh`, kg: operational_co2 });
   } else {
     const mpg = settings.mpg || 28;
+    const gasPrice = settings.gasPriceUsdGal ?? 3.50;
     const gallons = distance_mi / mpg;
-    fuel = gallons * (settings.gasPriceUsdGal ?? 3.50);
-    co2_tailpipe = gallons * KG_CO2_PER_GAL_GASOLINE;
+    energy = gallons * gasPrice;
+    energyLabel = 'Fuel';
+    operational_co2 = gallons * KG_CO2_PER_GAL_GASOLINE;
+    costRows.push({ label: 'Fuel', calc: `${gallons.toFixed(2)} gal × $${gasPrice.toFixed(2)}/gal`, usd: energy });
+    pollutionRows.push({ label: 'Tailpipe CO₂', calc: `${gallons.toFixed(2)} gal × 8.887 kg/gal`, kg: operational_co2 });
   }
 
-  const wear = distance_mi * (VEHICLE_WEAR_USD_PER_MI[vehicleClass] || VEHICLE_WEAR_USD_PER_MI.medium_sedan);
-
-  const total_cost = fuel + electricity + wear;
-  const total_co2 = co2_tailpipe + co2_grid;
+  costRows.push({ label: 'Maintenance & wear', calc: `${distance_mi.toFixed(1)} mi × $${wearRate.toFixed(2)}/mi`, usd: wear, optional: true });
 
   return {
     profile: 'car',
-    label: isEV ? 'Driving (EV)' : 'Driving',
+    label: isEV ? 'Driving (electric)' : 'Driving (gas)',
     icon: 'car',
+    impact: isEV ? 'low' : 'high',   // gas = high (red chips); EV = low (orange chips)
     distance_mi, duration_min,
-    cost: {
-      total: total_cost,
-      breakdown: {
-        fuel:        isEV ? undefined : fuel,
-        electricity: isEV ? electricity : undefined,
-        wear,
-      },
-    },
-    co2: {
-      total_kg: total_co2,
-      breakdown: {
-        tailpipe: isEV ? undefined : co2_tailpipe,
-        grid:     isEV ? co2_grid   : undefined,
-      },
-    },
-    health: { value_usd: 0, calories_burned: 0, minutes_active: 0 },
+    cost: { energy, maintenance: wear, energyLabel, rows: costRows },
+    pollution: { operational_kg: operational_co2, food_kg: 0, hasTailpipe: !isEV, rows: pollutionRows },
+    activity: { minutes: 0, calories: 0, lighter: false, met: 0, weightKg: settings.weightKg || 75, hours: duration_min / 60 },
     caveats,
   };
 }

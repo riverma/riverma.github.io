@@ -3,7 +3,6 @@
 
 import {
   US_AVG_GAS_USD_GAL, US_AVG_ELEC_USD_KWH, DEFAULT_TRANSIT_FARE_USD,
-  VALUE_OF_TIME_USD_PER_HR_DEFAULT,
 } from './data/constants.js';
 
 const STORAGE_KEY = 'riverma.mobility-choices.v1';
@@ -13,6 +12,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   _schema: SCHEMA_VERSION,
   units: 'imperial',                       // 'imperial' | 'metric'
   vehicleClass: 'medium_sedan',
+  includeMaintenance: false,               // fold maintenance/wear into the Cost signal
   mpg: 28,
   evKwhPerMi: 0.30,
   gasPriceUsdGal: US_AVG_GAS_USD_GAL,
@@ -22,8 +22,6 @@ export const DEFAULT_SETTINGS = Object.freeze({
   weightKg: 75,
   walkingSpeedMph: 3.0,                    // sanity-check display only
   cyclingSpeedMph: 12,                     // sanity-check display only
-  tripsPerYear: 100,                       // retained for About-page HEAT annualised example
-  valueOfTimeUsdPerHr: VALUE_OF_TIME_USD_PER_HR_DEFAULT,
   graphhopperKey: '',
   transit: { defaultFareUsd: DEFAULT_TRANSIT_FARE_USD, otpEndpoint: null },  // RESERVED
 });

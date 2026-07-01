@@ -22,85 +22,89 @@ function header(onClose) {
 function body() {
   const wrap = el('article', { class: 'mc-prose' });
   wrap.innerHTML = `
-    <p>Mobility Choices estimates the <em>full</em> cost and benefit of getting between two places —
-    money, time, CO₂, and health — for driving, cycling, e-biking, and walking.
-    The goal is to make trade-offs the default mapping apps hide visible.</p>
+    <p>Mobility Choices shows what getting between two places really involves — its
+    <strong>cost</strong>, <strong>time</strong>, <strong>pollution</strong>, and the
+    <strong>physical activity</strong> you gain — for driving, cycling, e-biking, and walking.
+    Rather than rolling everything into one made-up number, it shows each signal on its own,
+    so you can weigh the trade-offs the default mapping apps hide.</p>
 
-    <h2>Sources of the numbers</h2>
+    <h2>The four signals</h2>
     <ul>
-      <li><strong>Driving — fuel CO₂:</strong> EPA factor of 8.887 kg CO₂ per gallon of gasoline
-      (EPA Greenhouse Gas Equivalencies, 2023).</li>
-      <li><strong>Driving — fuel cost:</strong> your MPG (settings) × your local gas price
-      (settings; defaults from EIA weekly averages).</li>
-      <li><strong>Driving — vehicle wear:</strong> marginal cost per mile (just the part that
-      this particular trip wears on the car: maintenance &amp; repairs, tires, wear-related
-      depreciation). We deliberately exclude fixed costs (insurance, registration, time-based
-      depreciation) because they don't scale with whether you take this trip. Typical sedan
-      ≈ $0.13/mi. Source: AAA <em>Your Driving Costs 2024</em> maintenance row + NHTSA tire
-      replacement data; ceiling reference: IRS standard mileage $0.70/mi.</li>
-      <li><strong>EV CO₂:</strong> kWh per mile × your state's EPA eGRID 2022 grid intensity.</li>
-      <li><strong>Cycling maintenance:</strong> $0.03/mi (chain, tires, brake pads, occasional
-      tune-up). Source: League of American Bicyclists / consumer cycling estimates,
-      typical moderate rider $50–150/yr.</li>
-      <li><strong>E-bike maintenance:</strong> $0.06/mi (regular-bike maintenance plus amortised
-      battery wear ~$500 / ~30,000 mi and additional drivetrain wear from motor torque).</li>
-      <li><strong>E-bike electricity:</strong> 20 / 30 / 50 Wh per mile depending on bike type
-      (settings) × your local price.</li>
-      <li><strong>Active-mode CO₂:</strong> the extra food calories required to sustain the activity,
-      multiplied by ~2.2 g CO₂e per kcal (Poore &amp; Nemecek, <em>Science</em>, 2018, global-average diet).</li>
-      <li><strong>Calories burned:</strong> METs × body weight (kg) × hours, using values from
-      Ainsworth et al. 2011 Compendium of Physical Activities.</li>
+      <li><strong>Cost</strong> — by default the <em>energy</em> a trip uses: fuel (your MPG ×
+      local gas price) or electricity (kWh × local price). A bike or a walk costs nothing to
+      energise, so it reads as free. Turn on <em>“Add maintenance / wear costs”</em> in Settings
+      to also fold in vehicle wear and bike/e-bike maintenance.</li>
+      <li><strong>Time</strong> — the trip's duration. Shown as time, not converted to dollars.</li>
+      <li><strong>Pollution</strong> — see below.</li>
+      <li><strong>Activity</strong> — see below.</li>
     </ul>
 
-    <h2>How the overall score works</h2>
-    <p>Each mode gets one combined score in dollars, with higher meaning better.
-    Money, time, and carbon are <em>costs</em> that reduce the score; only the health
-    benefit adds to it. The formula:</p>
-    <p><code>score = health_benefit − money_cost − time_cost − carbon_cost</code></p>
+    <h2>Activity &amp; health</h2>
+    <p>Instead of putting a dollar value on your health, we report the <strong>minutes of
+    moderate activity</strong> a trip gives you and compare them to the public-health
+    guideline of <strong>150 minutes of activity per week</strong><sup><a href="#mc-fn-1">1</a></sup><sup><a href="#mc-fn-2">2</a></sup>.
+    Walking, cycling, and e-biking all clear the moderate (≥3 MET) threshold, so the whole trip
+    counts; an e-bike counts at a lighter intensity.</p>
+    <p>Regularly reaching about 150 min/week is linked to roughly an <strong>11% lower risk of
+    early death</strong><sup><a href="#mc-fn-3">3</a></sup> — the meta-analysis underlying the
+    World Health Organization's HEAT tool<sup><a href="#mc-fn-4">4</a></sup>, the recognised
+    standard transport agencies use to value walking and cycling.</p>
+
+    <h2>Pollution</h2>
+    <p>“Pollution” counts <strong>operational emissions only</strong> — what the trip puts into
+    the air as you travel. A gas car emits CO₂ at the tailpipe<sup><a href="#mc-fn-5">5</a></sup>
+    plus local pollutants — <strong>PM2.5, NOx, VOCs, and CO</strong> — that harm the lungs and
+    hearts of people nearby<sup><a href="#mc-fn-7">7</a></sup><sup><a href="#mc-fn-8">8</a></sup>.
+    An electric car has no tailpipe; its emissions move to the power grid (kWh × your state's
+    grid intensity<sup><a href="#mc-fn-6">6</a></sup>), and so does an e-bike's — both far lower
+    per mile. Walking and cycling are ~zero.<sup><a href="#mc-fn-9">9</a></sup></p>
+    <p class="mc-prose-foot"><em>Footnote:</em> active travel does carry a small lifecycle carbon
+    cost from the extra food calories it requires (~2.2 g CO₂e/kcal)<sup><a href="#mc-fn-10">10</a></sup>.
+    That's a climate-accounting figure, not air pollution, so it is excluded from the Pollution
+    signal and noted only in each card's details.</p>
+
+    <h2>Only available in the Apple / Android app version</h2>
+    <p>This web version runs entirely in your browser — no account, no server, free community
+    map data — which keeps it private and works offline. A few features need a backend or paid
+    data, so they live in the native app:</p>
     <ul>
-      <li><strong>Money cost:</strong> what you actually pay for the trip (fuel + wear, electricity, maintenance, etc.).</li>
-      <li><strong>Time cost:</strong> the trip's duration multiplied by your Value of Time
-      (default $15/hr from US DOT 2016 personal-travel guidance; adjustable in Settings).
-      This is what makes a 4-hour walk lose out to a 17-minute drive for ordinary urban trips.</li>
-      <li><strong>Carbon cost:</strong> kg CO₂ multiplied by the EPA 2023 Social Cost of Carbon
-      (~$0.19/kg, 2% discount rate). Internalises the climate damage of emissions.</li>
-      <li><strong>Health benefit:</strong> calories burned multiplied by a conservative per-kcal
-      mortality-risk value ($0.02/kcal). See "About the per-trip health value" below.</li>
+      <li><strong>Public transit directions.</strong> Needs live GTFS feeds and a hosted routing
+      backend with API keys — more than a static, offline-first web page can bundle.</li>
+      <li><strong>Live traffic-aware drive times.</strong> Requires a paid real-time traffic
+      feed; the web version uses free-flow community routing, so its drive times run optimistic.</li>
+      <li><strong>Dollar-valued local-pollutant health damages.</strong> We name PM2.5/NOx/VOCs/CO
+      here but only quantify CO₂; per-mile damage models (EPA/VTPI) are heavier datasets better
+      suited to the app.</li>
+      <li><strong>Multimodal trips</strong> (drive-to-train, bike-to-bus) — these build on the
+      transit backend above.</li>
     </ul>
 
-    <h2>About the per-trip health value</h2>
-    <p>We deliberately use a conservative per-kilocalorie estimate ($0.02/kcal) rather than
-    the WHO HEAT methodology directly. HEAT projects sustained active travel into an
-    <em>annual</em> mortality reduction; mechanically extrapolating it to a single trip
-    produces eye-popping figures ($100+ for one walk) that overstate what one trip really
-    achieves. The per-kcal value is grounded in dose-response cohort studies (Wen et al.
-    Lancet 2011; Arem et al. JAMA Intern Med 2015), conservatively scaled so a one-off trip
-    shows a small but real contribution to mortality-risk reduction.</p>
-    <p>For reference: if you were to take this trip regularly, the WHO HEAT annualised
-    benefit would be considerably larger — and that is the appropriate framing for
-    population-level policy interventions. For a one-time individual trip decision,
-    the per-kcal value is more honest.</p>
-
-    <h2>What's deliberately missing in v1</h2>
+    <h2>Providers</h2>
     <ul>
-      <li><strong>Public transit.</strong> The architecture reserves a transit slot, a multi-leg
-      route shape, a transit-engine stub, and a transit settings section. Wiring a router into it
-      (OpenTripPlanner, GraphHopper Transit, etc.) lands transit without rewriting the rest.</li>
-      <li><strong>Traffic-aware driving times.</strong> OSRM uses free-flow speeds. Real-world
-      driving times are usually longer.</li>
-      <li><strong>Air-pollution &amp; crash-risk externalities</strong> for driving — methodology
-      tractable but politically squishy. May land in a future version.</li>
-      <li><strong>Multimodal trips</strong> (drive-to-trailhead, bike-to-train).</li>
+      <li><strong>Routing:</strong> OSRM, hosted by
+      <a href="https://www.fossgis.de/" target="_blank" rel="noopener">FOSSGIS e.V.</a>
+      at <code>routing.openstreetmap.de</code> (no API key). Optional: paste a free
+      <a href="https://www.graphhopper.com" target="_blank" rel="noopener">GraphHopper</a> key
+      in Settings to switch providers.</li>
+      <li><strong>Geocoding:</strong>
+      <a href="https://photon.komoot.io" target="_blank" rel="noopener">Photon</a> by Komoot,
+      on OpenStreetMap data.</li>
+      <li><strong>Map tiles:</strong> OpenStreetMap. Map data &copy; OpenStreetMap contributors.</li>
     </ul>
 
-    <h2>Provider details</h2>
-    <p>Default routing: OSRM, hosted by <a href="https://www.fossgis.de/" target="_blank" rel="noopener">FOSSGIS e.V.</a>
-    at <code>routing.openstreetmap.de</code> (no API key). Optional: paste a free
-    <a href="https://www.graphhopper.com" target="_blank" rel="noopener">GraphHopper</a> key
-    in settings to switch providers.</p>
-    <p>Geocoding: <a href="https://photon.komoot.io" target="_blank" rel="noopener">Photon</a>
-    by Komoot, on OpenStreetMap data.</p>
-    <p>Map tiles: OpenStreetMap. Map data &copy; OpenStreetMap contributors.</p>
+    <h2>References</h2>
+    <ol class="mc-refs">
+      <li id="mc-fn-1"><a href="https://www.who.int/publications/i/item/9789240015128" target="_blank" rel="noopener">WHO Guidelines on Physical Activity and Sedentary Behaviour (2020)</a></li>
+      <li id="mc-fn-2"><a href="https://health.gov/our-work/nutrition-physical-activity/physical-activity-guidelines" target="_blank" rel="noopener">US HHS Physical Activity Guidelines for Americans, 2nd ed.</a></li>
+      <li id="mc-fn-3"><a href="https://doi.org/10.1186/s12966-014-0132-x" target="_blank" rel="noopener">Kelly et al. 2014, <em>Int. J. Behav. Nutr. Phys. Act.</em> — dose-response of walking/cycling and mortality</a></li>
+      <li id="mc-fn-4"><a href="https://www.who.int/europe/tools-and-toolkits/health-economic-assessment-tool-for-walking-and-cycling" target="_blank" rel="noopener">WHO Health Economic Assessment Tool (HEAT) for walking and cycling</a></li>
+      <li id="mc-fn-5"><a href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator-calculations-and-references" target="_blank" rel="noopener">EPA Greenhouse Gas Equivalencies — 8.887 kg CO₂/gallon gasoline</a></li>
+      <li id="mc-fn-6"><a href="https://www.epa.gov/egrid" target="_blank" rel="noopener">EPA eGRID — grid CO₂ intensity by region</a></li>
+      <li id="mc-fn-7"><a href="https://www.epa.gov/greenvehicles/smog-vehicle-emissions" target="_blank" rel="noopener">EPA — Smog, Soot, and Other Air Pollution from Transportation</a></li>
+      <li id="mc-fn-8"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8713776/" target="_blank" rel="noopener">Health impacts of on-road transportation emissions in the US (≈19,800 PM2.5 deaths/yr)</a></li>
+      <li id="mc-fn-9"><a href="https://www.vtpi.org/tca/tca0510.pdf" target="_blank" rel="noopener">Victoria Transport Policy Institute — Transportation Cost &amp; Benefit Analysis II: Air Pollution Costs</a></li>
+      <li id="mc-fn-10"><a href="https://www.science.org/doi/10.1126/science.aaq0216" target="_blank" rel="noopener">Poore &amp; Nemecek 2018, <em>Science</em> — lifecycle CO₂ of food</a></li>
+    </ol>
 
     <p class="mc-prose-foot">
       Full creator and dependency credits on the

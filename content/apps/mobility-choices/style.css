@@ -409,7 +409,7 @@ a:hover { text-decoration: underline; }
 }
 
 .mc-metric-row {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
   margin-bottom: 6px;
 }
 .mc-metric {
@@ -429,17 +429,22 @@ a:hover { text-decoration: underline; }
   letter-spacing: -0.015em;
 }
 
-/* Cost = red, benefit = green, neutral = gray */
+/* High-impact cost/pollution = red, low-impact (EV/e-bike/bike) = orange,
+   free/none & activity = green, neutral = gray. */
 .mc-cost,    .mc-metric--cost    .mc-metric-value { color: #c43a31; }
+.mc-warn,    .mc-metric--warn    .mc-metric-value { color: #ea580c; }
 .mc-benefit, .mc-metric--benefit .mc-metric-value { color: #16a34a; }
 .mc-neutral, .mc-metric--neutral .mc-metric-value { color: var(--mc-label-2); }
 .mc-metric--cost    { background: rgba(196,58,49,0.08); }
+.mc-metric--warn    { background: rgba(255,107,53,0.10); }
 .mc-metric--benefit { background: rgba(22,163,74,0.08); }
 .mc-metric--neutral { background: var(--mc-fill-2); }
 @media (prefers-color-scheme: dark) {
   .mc-cost,    .mc-metric--cost    .mc-metric-value { color: #ff8a7a; }
+  .mc-warn,    .mc-metric--warn    .mc-metric-value { color: #fdba74; }
   .mc-benefit, .mc-metric--benefit .mc-metric-value { color: #6ee7a3; }
   .mc-metric--cost    { background: rgba(255,138,122,0.10); }
+  .mc-metric--warn    { background: rgba(255,176,112,0.12); }
   .mc-metric--benefit { background: rgba(110,231,163,0.10); }
 }
 
@@ -471,36 +476,48 @@ a:hover { text-decoration: underline; }
   color: var(--mc-label-2);
 }
 .mc-detail-text { margin: 0 0 6px; font-size: var(--mc-fz-foot); color: var(--mc-label-2); }
+.mc-caption { font-size: var(--mc-fz-cap); color: var(--mc-label-3); margin: 2px 0 8px; }
 
-/* Score breakdown — clear line-by-line explanation of the overall number. */
-.mc-score-breakdown { margin: 4px 0 12px; }
-.mc-score-lines {
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 10px 12px; background: var(--mc-fill-2); border-radius: 10px;
-  margin-top: 6px;
+/* Each expanded-card signal sits in its own boxed section so Activity / Cost / Pollution
+   read as clearly distinct blocks. */
+.mc-detail-section {
+  background: var(--mc-fill-2);
+  border: 0.5px solid var(--mc-separator);
+  border-radius: 12px;
+  padding: 8px 12px 10px;
+  margin-bottom: 10px;
 }
-.mc-score-line {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
-  padding: 4px 0;
-  font-variant-numeric: tabular-nums;
+.mc-detail-section:last-child { margin-bottom: 0; }
+.mc-detail-section .mc-detail-h { margin-top: 2px; color: var(--mc-card-accent, var(--mc-label)); }
+.mc-detail-section .mc-caption:last-child { margin-bottom: 0; }
+.mc-caveat  { font-size: var(--mc-fz-cap); color: var(--mc-label-3); margin: 2px 0; }
+
+/* Calculation tables — show how each section's numbers were derived. */
+.mc-calc-table {
+  width: 100%; border-collapse: collapse; margin: 4px 0 6px;
+  table-layout: fixed;
+  font-size: var(--mc-fz-foot); font-variant-numeric: tabular-nums;
 }
-.mc-score-line-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.mc-score-line-label { font-size: var(--mc-fz-foot); font-weight: 600; color: var(--mc-label); }
-.mc-score-line-hint  { font-size: var(--mc-fz-cap); color: var(--mc-label-2); }
-.mc-score-line-value { font-size: var(--mc-fz-body); font-weight: 600; white-space: nowrap; }
-.mc-score-line--total {
+.mc-calc-table col,
+.mc-calc-table th:nth-child(1), .mc-calc-table td:nth-child(1) { width: 38%; }
+.mc-calc-table th:nth-child(2), .mc-calc-table td:nth-child(2) { width: 39%; overflow-wrap: anywhere; }
+.mc-calc-table th:nth-child(3), .mc-calc-table td:nth-child(3) { width: 23%; }
+.mc-calc-table th {
+  text-align: left; padding: 2px 6px 4px;
+  font-size: var(--mc-fz-micro); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--mc-label-3);
+}
+.mc-calc-table th.mc-calc-amount, .mc-calc-table td.mc-calc-amount { text-align: right; }
+.mc-calc-table td {
+  padding: 4px 6px; vertical-align: top;
   border-top: 0.5px solid var(--mc-separator);
-  padding-top: 8px; margin-top: 4px;
+  color: var(--mc-label);
 }
-.mc-score-line--total .mc-score-line-label { font-size: var(--mc-fz-body); }
-.mc-score-line--total .mc-score-line-value { font-size: var(--mc-fz-h2); font-weight: 700; }
-.mc-score-note { font-size: var(--mc-fz-cap); color: var(--mc-label-3); margin-top: 8px; }
-.mc-breakdown {
-  margin: 0; padding: 0 0 6px 18px;
-  list-style: disc; font-size: var(--mc-fz-foot); color: var(--mc-label-2);
-}
-.mc-breakdown li { margin: 3px 0; }
-.mc-sub { margin: 0; color: var(--mc-label-2); font-size: var(--mc-fz-foot); }
+.mc-calc-calc { color: var(--mc-label-2); }
+.mc-calc-amount { white-space: nowrap; font-weight: 600; }
+.mc-calc-row--muted td { color: var(--mc-label-3); }
+.mc-calc-row--total td { font-weight: 700; color: var(--mc-label); border-top-width: 1px; }
 
 /* --- Settings — iOS Settings.app style, grouped insets --- */
 .mc-settings { padding: 8px 16px 24px; }

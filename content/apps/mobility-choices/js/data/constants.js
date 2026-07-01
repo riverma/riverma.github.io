@@ -11,11 +11,6 @@ export const KG_CO2_PER_GAL_GASOLINE = 8.887;
   // EPA "Greenhouse Gases Equivalencies Calculator — Calculations and References", 2023.
   // https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator-calculations-and-references
 
-// --- Social Cost of Carbon ($/kg CO2) used to monetise carbon emissions for the overall score.
-//     EPA 2023 SC-CO2 final value: ~$190/tonne at 2% discount rate (2020 USD). $0.19/kg.
-//     https://www.epa.gov/environmental-economics/social-cost-greenhouse-gases
-export const SOCIAL_COST_OF_CARBON_USD_PER_KG = 0.190;
-
 export const CO2E_G_PER_KCAL_FOOD = 2.2;
   // Poore & Nemecek, "Reducing food's environmental impacts through producers and consumers",
   // Science 2018 — global average diet, lifecycle CO2-eq per dietary kcal.
@@ -26,42 +21,23 @@ export const US_AVG_GAS_USD_GAL    = 3.50;   // EIA U.S. retail gasoline rolling
 export const US_AVG_ELEC_USD_KWH   = 0.18;   // EIA residential avg (2025-26)
 export const US_AVG_GRID_KG_CO2_KWH = 0.371; // EPA eGRID 2022 national, used when no state selected
 
-// --- Per-trip health benefit ---
-//
-// We deliberately DO NOT use the WHO HEAT methodology directly for the per-trip number.
-// HEAT estimates population-level annual mortality reduction from sustained active travel;
-// extrapolating it to a single trip produces eye-popping but misleading figures (e.g. $100+
-// for one walk). For a single-trip marginal value we use a much more conservative per-kcal
-// estimate grounded in dose-response cohort studies (Wen et al. Lancet 2011; Arem et al. JAMA
-// Intern Med 2015), conservatively scaled so a one-off trip shows a small but real
-// contribution to mortality-risk reduction. The annualised HEAT figure is still surfaced
-// in the About page so users can see what regular active travel is worth over a year.
-export const HEALTH_USD_PER_KCAL = 0.02;
-
-// --- Value of time ---
-// US DOT 2016 Revised Departmental Guidance values personal local travel time at ~50% of
-// the median hourly wage; $15/hour is a defensible default for general personal travel.
-// Configurable per user in settings.
-// https://www.transportation.gov/office-policy/transportation-policy/revised-departmental-guidance-on-valuation-of-travel-time-in
-export const VALUE_OF_TIME_USD_PER_HR_DEFAULT = 15.00;
-
-// --- HEAT constants (retained for the About page's annualised reference number) ---
-export const VSL_USD = 11_400_000;
-  // US DOT 2024 Value of Statistical Life guidance.
-  // https://www.transportation.gov/office-policy/transportation-policy/revised-departmental-guidance-on-valuation-of-a-statistical-life-in-economic-analysis
-export const HEAT_RR_CYCLING            = 0.90;
-export const HEAT_RR_WALKING            = 0.89;
-export const HEAT_CYCLING_REF_MIN_WK    = 100;
-export const HEAT_WALKING_REF_MIN_WK    = 168;
-export const HEAT_CAP_MIN_WK            = 450;
-export const HEAT_BACKGROUND_MORTALITY_US = 0.0084;
-
 // --- MET (Metabolic Equivalent of Task) values ---
 // Ainsworth et al., "2011 Compendium of Physical Activities".
 // https://sites.google.com/site/compendiumofphysicalactivities/
 export const MET_WALKING_MODERATE = 3.5;   // ~3.0 mph, level
 export const MET_CYCLING_LEISURE  = 6.8;   // ~12–14 mph
 export const MET_EBIKE            = 4.9;   // Langford et al. 2017
+export const MET_MODERATE_THRESHOLD = 3.0; // ≥3 METs counts as moderate-or-greater activity
+
+// --- Physical-activity goal (the health signal) ---
+// We report each trip's active minutes against the recommended weekly target, instead of
+// monetising calories. The 150-min/week guideline is the WHO 2020 / US HHS (2nd ed.)
+// recommendation; the ~11% lower all-cause mortality at the reference dose comes from
+// Kelly et al. 2014 (IJBNPA) — the meta-analysis underlying the WHO HEAT tool.
+//   WHO 2020: https://www.who.int/publications/i/item/9789240015128
+//   Kelly et al. 2014: https://doi.org/10.1186/s12966-014-0132-x
+export const ACTIVITY_WEEKLY_GOAL_MIN        = 150;
+export const ACTIVITY_MORTALITY_REDUCTION_PCT = 11;
 
 // --- Marginal vehicle wear $/mi — the trip-attributable portion.
 //
@@ -127,11 +103,6 @@ export const EV_KWH_PER_MI_DEFAULT = 0.30;   // typical mid-size EV (EPA 2024 av
 export const EBIKE_DURATION_MULTIPLIER = 0.7;
   // E-bike commute speeds are ~30% faster than analog bikes at moderate assist.
   // Sources: Langford 2017; Bourne et al. 2018 meta-analysis on e-bike commute behaviour.
-
-// --- HEAT e-bike health-benefit discount ---
-// e-bikers achieve roughly the MET_EBIKE / MET_CYCLING_LEISURE share of the cycling benefit
-// per active-minute (lower exertion, self-selected longer trips offset partially).
-export const EBIKE_HEAT_DISCOUNT = MET_EBIKE / MET_CYCLING_LEISURE;  // ≈ 0.72
 
 // --- Transit (RESERVED for v2; here so engine/transit.js can import without churn) ---
 export const TRANSIT_KG_CO2_PER_PMT = {  // EPA 2024 transit emission factors, per passenger-mile
