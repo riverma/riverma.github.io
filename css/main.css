@@ -451,6 +451,7 @@ footer p {
 }
 
 /* Per-tile background art (kept slim — image visible behind dark gradient) */
+.tile.tile-appslauncher { background-image: url("../img/media/apps-grid.jpg"); min-height: 132px; background-position: center; }
 .tile.tile-artportfolio { background-image: url("../img/art-portfolio/banner.jpg"); }
 .tile.tile-tzl8         { background-image: url("../img/media/tzl8-logo.png"); background-color: #000; background-size: contain; background-position: center left; }
 .tile.tile-tablage      { background-image: url("../img/media/tablage-background.jpg"); }
